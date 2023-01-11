@@ -1,0 +1,86 @@
+<%- include('../admin/layouts/admin-header.ejs') %>
+
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Add, edit or delete a category</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <form action="/admin/addcategory" method="post">
+                                <div class="mb-4">
+                                    <label name="name"  for="product_name" class="form-label">Name</label>
+                                    <input type="text" placeholder="Type here" name="name"  class="form-control" id="product_name" />
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label   class="form-label">Description</label>
+                                    <textarea placeholder="Type here" name="description" class="form-control"></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Create category</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </th>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <!-- <th>Slug</th> -->
+                                            <!-- <th>Order</th> -->
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% categories.forEach(function(x){ %>
+
+                                        <tr>
+                                            <td class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </td>
+                                            <td><%=index++%></td>
+                                            <td><%=x.name%></td>
+                                            <td><%=x.description%></td>
+                                            <!-- <td>/men</td> -->
+                                            <!-- <td>1</td> -->
+                                            <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        
+                                                        <a class="dropdown-item" href="#">Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+<%- include('../admin/layouts/admin-footer.ejs') %>
+        
