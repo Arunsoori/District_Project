@@ -10,6 +10,8 @@ const productModel = require("../models/productModel");
 const fs = require("fs")
 
 
+
+
 const loadLogin = async (req, res) => {
   try {
     res.render("login");
@@ -57,10 +59,10 @@ const doLogin = async (req, res) => {
     if (!isMatch) {
       return res.redirect("/admin");
     }
-    // req.session.user = user.name
-    // req.session.userId = user._id
-    // req.session.userLogin = true;
-    // console.log(req.session);
+    
+    req.session.adminId = user._id
+    req.session.adminLogin = true;
+    
     res.render("dashboard");
   } catch (error) {
     console.log(error.message);
@@ -127,17 +129,18 @@ const insertCategory = async (req, res) => {
   }
 };
 const loadAddproducts =async(req,res)=>{
+  if (req.session.adminLogin){
     try{
         // const products =await productModel.find()
         // console.log(users);
         const categories = await categoryModel.find()
     res.render('addproducts',{categories})
-    
+    }
+    catch(error){
+      console.log(error.message);
+  }
+}
 
-}
-catch(error){
-    console.log(error.message);
-}
 }
 const loadProductlist = async (req, res) => {
   try {
@@ -147,6 +150,7 @@ const loadProductlist = async (req, res) => {
   } catch (error) {
     console.log(error.message);
   }
+  
 };
 // Delete Product
 const deleteProduct =  async (req, res) => {

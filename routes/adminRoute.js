@@ -2,6 +2,7 @@ const express = require("express");
 const admin_route = express();
 const file = require('../utils/multer')
 const multer = require("multer");
+const isLogin = require('../middleware/auth')
 
 
 admin_route.set("view engine", "ejs");

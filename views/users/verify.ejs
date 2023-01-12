@@ -1,0 +1,22 @@
+<%- include('../users/layouts/user-header.ejs') %>
+
+
+
+<form action="/verify" method="post" class="row g-3">
+    <div class="col-auto">
+      <label for="staticEmail2" class="visually-hidden">Verify OTP</label>
+      
+    </div>
+    <div class="col-auto">
+      <label for="inputPassword2" class="visually-hidden">OTP</label>
+      <input type="text" class="form-control" id="inputPassword2" placeholder="otp" name="otp"/>
+    </div>
+    <div class="col-auto">
+      <button type="submit"  class="btn btn-primary mb-3">Verify</button>
+    </div>
+    <div class="col-auto">
+        <a href="/resendotp"  class="btn btn-primary mb-3">Resend OTP</a>
+      </div>
+  </form>
+
+<%- include('../users/layouts/user-footer.ejs') %>

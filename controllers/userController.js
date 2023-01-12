@@ -5,7 +5,8 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const productModel = require('../models/productModel');
 const categoryModel = require('../models/categoryModel');
-
+const sendOtp = require('../utils/nodemailer')
+let otp =""
 const loadRegister =async(req,res)=>{
     try{
     res.render('registration')
@@ -15,10 +16,11 @@ const loadRegister =async(req,res)=>{
     console.log(error.message);
 }
 }
-const insertUser = async(req,res)=>{
+const insertUser = async(req,res,next)=>{
     console.log(req.body);
     try{
     // const bc=await bcrypt.hash(req.body.password,10)
+    req.session.email = req.body.email;
 
     const userdata =new userModel({
         name:req.body.name,
@@ -30,23 +32,31 @@ const insertUser = async(req,res)=>{
 
 
     })
-    const userData =await userdata.save()
-    if (userData){
-        res.render('home')
-        // res.send('hello')
-    } else{
-        res.render('registration',{message:'your registration failed'})
-        // res.send('helhiiiiilo')
-
+    await userdata.save()
+    
+            .then(() => {
+                next();
+            })
+            .catch((error) => {
+                console.log(error);
+                res.redirect("/register");
+            })
+    } catch (error) {
+        next(error);
     }
+}
+    // if (userData){
+    //     res.render('home')
+    //     // res.send('hello')
+    // } else{
+    //     res.render('registration',{message:'your registration failed'})
+    //     // res.send('helhiiiiilo')
+
+    // }
 
     
 
-    }catch(error){
-        console.log(error.message);
-    }
 
-}
 const home =async(req,res)=>{
     try{
     res.render('home')
@@ -92,10 +102,10 @@ const doLogin =async(req,res)=>{
         if (!isMatch) {
           return res.redirect('/login');
         }
-        // req.session.user = user.name
-        // req.session.userId = user._id
-        // req.session.userLogin = true;
-        // console.log(req.session);
+        req.session.user = user.name
+        req.session.userId = user._id
+        req.session.userLogin = true;
+        console.log(req.session);
         res.redirect('/');
   
       } 
@@ -109,12 +119,110 @@ catch (error){
 }
 const singleProdetails = async (req, res) => {
     try {
-      res.render("singleprodetails");
+        const id = req.params.id
+       const product =await  productModel.findOne({ _id: id })
+      res.render("singleprodetails",{product});
     } catch (error) {
       console.log(error.message);
     }
   };
-  
+  const wishList = async (req, res) => {
+    try {
+        // const id = req.params.id
+    //    const product =await  productModel.findOne({ _id: id })
+      res.render("wishlist",{});
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const addToCart = async (req, res) => {
+    try {
+        // const id = req.params.id
+    //    const product =await  productModel.findOne({ _id: id })
+      res.render("cart");
+    } catch (error) {
+      console.log(error.message);
+      next()
+    }
+    
+  };
+  const verifyOtpPage = async(req,res)=>{
+    try{
+        res.render("verify")
+    }
+    catch(error){
+        next()
+    }
+    }
+  const getOtp = async (req, res, next) => {
+    let email = req.session.email;
+    otp = Math.floor(100000 + Math.random() * 900000);
+    console.log(otp);
+    await sendOtp.sendVerifyEmail(email, otp)
+        .then(() => {
+            res.redirect('/verify');
+        }).catch((error) => {
+            next(error)
+        })
+
+}
+
+
+
+
+
+
+const verifyUser = async (req, res, next) => {
+    console.log(">>>>>>>>>>>>>>");
+    console.log(req.body);
+    try {
+        if (req.body.otp == otp) {
+            // console.log("both otp equal");
+            // console.log(req.session);
+            await userModel.findOneAndUpdate({ email: req.session.email }, { $set: { verified: true } })
+                .then(() => {
+                    otp = "";
+                    res.redirect('/')
+                })
+                .catch((error)=>{
+                    next(error)
+                })
+
+        } else {
+            console.log("otp doesnt match");
+            return res.redirect('/verify')
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+// const doSignup = async (req, res, next) => {
+//     try {
+//         req.session.email = req.body.email;
+//         const newUser = UserModel({
+//             fullname: req.body.fullname,
+//             email: req.body.email,
+//             mobile: req.body.mobile,
+//             password: await bcrypt.hash(req.body.password, 10),
+//             password2: req.body.password2
+//         })
+
+//         await newUser.save()
+//             .then(() => {
+//                 next();
+//             })
+//             .catch((error) => {
+//                 console.log(error);
+//                 res.redirect("/register");
+//             })
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+
+
 
 
 module.exports={
@@ -125,4 +233,12 @@ module.exports={
     doLogin,
     shop,
     singleProdetails,
+    wishList,
+    addToCart,
+    verifyUser,
+    getOtp,
+    verifyOtpPage,
+    
+    
+    
 }

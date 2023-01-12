@@ -10,6 +10,9 @@ const bodyParser = require('body-parser');
 user_route.use(bodyParser.json())
 user_route.use(bodyParser.urlencoded({extended:true}))
 
+
+
+
 const multer =require("multer");
 const path = require("path")
 const storage = multer.diskStorage({
@@ -31,12 +34,24 @@ user_route.get('/',userController.home)
 user_route.get('/login',userController.loadLogin)
 user_route.post('/login',userController.doLogin)
 user_route.get('/shop',userController.shop)
-user_route.get("/singleprodetails",userController.singleProdetails);
-
-
-
-
+user_route.get("/singleprodetails/:id",userController.singleProdetails);
+user_route.get('/wishlist',userController.wishList)
+user_route.get('/cart',userController.addToCart)
 user_route.get('/register',userController.loadRegister)
-user_route.post('/register',userController.insertUser)
+user_route.post('/register',userController.insertUser,userController.getOtp)
+user_route.get('/verify',userController.verifyOtpPage);
+
+
+user_route.post('/register',userController.insertUser,userController.getOtp)
+user_route.get('/resendotp',userController.getOtp);
+
+
+user_route.post('/verify',userController.verifyUser);
+
+
+
+
+
+
 
 module.exports =user_route
