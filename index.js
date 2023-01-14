@@ -14,12 +14,13 @@ app.set('view engine', 'ejs');
 
 
 // session
-const min = 1000 * 60 ;
+const min = 1000 * 60 * 60* 24 ;
 app.use(session({
     secret: 'secret-key',
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: min },
+    
 }
 ))
 

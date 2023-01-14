@@ -16,7 +16,7 @@ const mailTransporter = nodemailer.createTransport({
 })
 
 const message = {
-    from: '"Libhrex Ecom" <noreply@libhrex.com>',
+    from: "district11",
     to: userEmail,
     subject: "Email Verification OTP",
     text: `Your OTP code is ${otp}. Please enter this code to verify your email address.`,
