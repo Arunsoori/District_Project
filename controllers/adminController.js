@@ -355,6 +355,7 @@ module.exports = {
   getdeleteProduct,
   loadEditproduct,
    updateProduct,
+  
    
   
   

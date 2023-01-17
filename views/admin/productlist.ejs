@@ -41,13 +41,14 @@
                 <span><%=product.price%></span>
             </div>
             
-            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                
+            <div class="col-lg-2 col-sm-2 col-4 col-action text-end d-flex">
+               <div class="me-2"> 
                 <a href="/admin/editproduct/<%= product._id %>" class="btn btn-sm font-sm rounded btn-brand">
                     <i class="material-icons md-edit"></i> Edit
                 </a>
+            </div>
             
-            
+            <div>
                 <% if (product.status) { %>
                     <form action="/admin/deleteProduct/<%= product._id %> " method="post">
                 <!-- <a href="" class="btn btn-sm font-sm btn-light rounded">
@@ -64,6 +65,7 @@
                 </form>
             
                     <% } %>
+                </div>
             </div>
            
         </div> <!-- row .// -->

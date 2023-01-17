@@ -8,6 +8,8 @@ const categoryModel = require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
 const sendOtp = require("../utils/nodemailer");
 const { render } = require("../routes/userRoute");
+const wishlistModel = require("../models/wishlistModel");
+const { count } = require("../models/userModel");
 let otp = "";
 const loadRegister = async (req, res) => {
   try {
@@ -110,15 +112,7 @@ const singleProdetails = async (req, res) => {
     console.log(error.message);
   }
 };
-const wishList = async (req, res) => {
-  try {
-    // const id = req.params.id
-    //    const product =await  productModel.findOne({ _id: id })
-    res.render("wishlist");
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+
 const loadCart = async (req, res, next) => {
   console.log("777777777777777777");
   try {
@@ -131,6 +125,7 @@ const loadCart = async (req, res, next) => {
     console.log(Cart);
     if (Cart) {
       let items = Cart.cartItems;
+    
       res.render("cart", { items });
     }
   } catch (error) {
@@ -147,6 +142,12 @@ const addToCart = async (req, res, next) => {
     console.log(userId);
     // const userData = await userModel.findById({_id:userId});
     const userExist = await cartModel.findOne({ userId });
+const productModel = require("../models/productModel");
+    const product =await productModel.findOne({_id:productId})
+    console.log(product);
+    console.log(product.price);
+
+
     if (userExist) {
       console.log("iiiiiiiiiiiiiiii");
       const productExist = await cartModel.findOne({
@@ -157,36 +158,114 @@ const addToCart = async (req, res, next) => {
       if (productExist) {
         await cartModel.findOneAndUpdate(
           { $and: [{ userId }, { "cartItems.productId": productId }] },
-          { $inc: { "cartItems.$.quantity": 1 } }
+          { $inc: { "cartItems.$.quantity": 1, "cartItems.$.total":product.price}}
         );
+        
+          // await cartModel.findOneAndUpdate(
+          //    { productId },
+          //   { $inc: {"cartitems.$.total" : product.price} }
+          // );
+
+
       } else {
         await cartModel.updateOne(
           { userId },
-          { $push: { cartItems: { productId, quantity: 1 } } }
+          { $push: { cartItems: { productId, quantity: 1, total:product.price } } }
         );
       }
+      
+        
+
+      
+
     } else {
       console.log();
       const cartDetails = new cartModel({
         userId: req.session.userId,
-        cartItems: [{ productId, quantity: 1 }],
+        cartItems: [{ productId, quantity: 1, total:product.price }],
       });
       await cartDetails
         .save()
         .then(() => {
           // res.render('cart');
         })
-        .catch((err) => {
-          res.render("cart404");
-        });
+        .catch ((error) =>{
+          console.log(error);
+        })
     }
   } catch (error) {
-    res.redirect("/cart404");
+    console.log(error);
   }
 };
-const cart404 = async (req, res, next) => {
-  res.render("cart404");
+const removeCart = async (req, res, next) => {
+  try {
+    const userId = req.session.userId;
+    const productId = new mongoose.Types.ObjectId(req.params.id);
+
+    await cartModel
+      .updateOne(
+        { userId: userId },
+        { $pull: { cartItems: { productId: productId } } }
+      )
+      .then((response) => {
+        res.redirect("/cart");
+      });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
+
+const loadWishlist = async (req, res, next) => {
+  console.log("777777777777777777");
+  try {
+    const userId = req.session.userId;
+
+    let wishlist = await wishlistModel
+      .findOne({ userId: userId })
+      .populate("productId")
+      .lean();
+
+    if (wishlist) {
+      let items = wishlist.productId;
+      console.log(items);
+      res.render("wishlist", { items });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+const addToWishlist = async (req, res, next) => {
+  try {
+    let userId = req.session.userId;
+    const userWishList = await wishlistModel.findOne({ userId: userId });
+    const productId = new mongoose.Types.ObjectId(req.params.id);
+
+    if (userWishList) {
+      const products = userWishList.productId;
+
+      await wishlistModel.updateOne(
+        { userId: userId },
+        { $push: { productId: productId } }
+      );
+    } else {
+      const wishlistData = new wishlistModel({
+        userId: userId,
+        productId: productId,
+      });
+      await wishlistData.save();
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// const cart404 = async (req, res, next) => {
+//   try {
+//     res.render("cart404");
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
 
 const verifyOtpPage = async (req, res) => {
   try {
@@ -195,6 +274,7 @@ const verifyOtpPage = async (req, res) => {
     next();
   }
 };
+
 const getOtp = async (req, res, next) => {
   let email = req.session.email;
   otp = Math.floor(100000 + Math.random() * 900000);
@@ -235,7 +315,20 @@ const verifyUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
+// const cartCount= async(req,res,next)=>{
+//   try{
+//   userId= req.session.userId
+//   const cart= await cartModel.findOne({userId:userId})
+//   count= cart.cartItems.length
+//   next()
+// }
+
+// catch (error){
+//   next(error)
+// }
+// }
+
 
 module.exports = {
   loadRegister,
@@ -245,11 +338,14 @@ module.exports = {
   doLogin,
   shop,
   singleProdetails,
-  wishList,
+  loadWishlist,
   verifyUser,
   getOtp,
   verifyOtpPage,
   loadCart,
   addToCart,
-  cart404,
-};
+  // cart404,
+  addToWishlist,
+  removeCart,
+  // cartCount,
+}

@@ -35,23 +35,29 @@ user_route.get('/login',userController.loadLogin)
 user_route.post('/login',userController.doLogin)
 user_route.get('/shop',userController.shop)
 user_route.get("/singleprodetails/:id",userController.singleProdetails);
-user_route.get('/wishlist',userController.wishList)
 user_route.get('/register',userController.loadRegister)
-user_route.post('/register',userController.insertUser,userController.getOtp)
 user_route.get('/verify',userController.verifyOtpPage);
 
 
-user_route.post('/register',userController.insertUser,userController.getOtp)
+// user_route.post('/register',userController.insertUser,userController.getOtp)
 user_route.get('/resendotp',userController.getOtp);
 user_route.get('/addToCart/:id',userController.addToCart);
+user_route.get('/wishlist',userController.loadWishlist)
+
+user_route.get('/addToWishlist/:id',userController.addToWishlist);
+
 user_route.get('/cart',userController.loadCart);
-user_route.get('/cart404',userController.cart404);
+user_route.get('/removeCart/:id',userController.removeCart);
+
+// user_route.get('/cart404',userController.cart404);
 
 
 
 
 
 user_route.post('/verify',userController.verifyUser);
+user_route.post('/register',userController.insertUser,userController.getOtp)
+
 
 
 

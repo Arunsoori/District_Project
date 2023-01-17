@@ -26,7 +26,7 @@
                                 <td class="image product-thumbnail"><img src="/uploads/<%=item.productId.image[0]%>" alt="#"></td>
                                 <td class="product-des product-name">
                                     <h5 class="product-name"><a href="shop-product-right.html"><%=item.productId.productName%></a></h5>
-                                    <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
+                                    <p class="font-xs"><%=item.productId.productName%><br> distingy magndapibus.
                                     </p>
                                 </td>
                                 <td class="price" data-title="Price"><span><%=item.productId.price%> </span></td>
@@ -34,13 +34,13 @@
                                     <div class="detail-qty border radius  m-auto">
                                         <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
                                         <span class="qty-val"><%=item.quantity%></span>
-                                        <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                        <a href="" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                     </div>
                                 </td>
                                 <td class="text-right" data-title="Cart">
-                                    <span><%=item.productId.price%> </span>
+                                    <span><%=item.total%> </span>
                                 </td>
-                                <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                <td class="action" data-title="Remove"><a href="/removeCart/<%=item.productId._id%>" class="text-muted"><i class="fi-rs-trash"></i></a></td>
                             </tr>
                             <!-- <tr>
                                 <td class="image"><img src="assets/imgs/shop/product-11-2.jpg" alt="#"></td>

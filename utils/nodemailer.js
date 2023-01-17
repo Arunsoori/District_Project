@@ -1,17 +1,16 @@
 const nodemailer = require('nodemailer');
-const email = process.env.USER_EMAIL;
-const password = process.env.USER_PASS;
+require ('dotenv').config()
 
 async function sendVerifyEmail(userEmail,otp){
 
 const mailTransporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     secure: false,
     requireTLS: true,
     auth:{
-        user: "test9633mail@gmail.com",
-        pass: "nfhwcbwgaiogzkuh"
+        user:process.env.SMTP_USER ,
+        pass: process.env.SMTP_PASS
     }
 })
 
