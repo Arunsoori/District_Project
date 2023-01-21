@@ -248,17 +248,22 @@
                         </div>
                         <div class="header-action-right">
                             <div class="header-action-2">
+                                <% if (login) { %>
+
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <span class="pro-count blue" id="wishCount" ><%= count.wish %></span>
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
+
                                     <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <span class="pro-count blue" id="cartCount" ><%= count.cart %></span>
                                     </a>
+                                    <% } %>
+
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                         <ul>
                                             <li>
@@ -430,3 +435,4 @@
             </div>
         </div>
     </header>
+   

@@ -5,13 +5,15 @@ const path=require('path')
 const app= express();
 const session=require("express-session")
 const multer = require('multer')
+const logger = require('morgan')
 app.use(express.static(path.join(__dirname, 'public')));
 // set view engine
 app.set('views', path.join(__dirname, '/views'))  //or
 // app.set('views', __dirname + '/views'); 
 app.set('view engine', 'ejs');
 
-
+//morgan
+app.use(logger('dev'))
 
 // session
 const min = 1000 * 60 * 60* 24 ;

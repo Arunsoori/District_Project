@@ -1,6 +1,6 @@
 <%- include('../users/layouts/user-header.ejs') %>
 
-
+<% if(count.wish){ %>
 <section class="mt-50 mb-50">
     <div class="container">
         <div class="row">
@@ -33,7 +33,7 @@
                                 <td class="text-right" data-title="Cart">
                                     <button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
                                 </td>
-                                <td class="action" data-title="Remove"><a href="#"><i class="fi-rs-trash"></i></a></td>
+                                <td class="action" data-title="Remove"><a href="javascript:delWishItem('<%=item._id%>')"><i class="fi-rs-trash"></i></a></td>
                             </tr>
                            
                             <% }) %>
@@ -45,4 +45,15 @@
         </div>
     </div>
 </section>
+<% } else { %>
+    <section class="vh-100">
+        <div></div>
+        <div class="row justify-content-center">
+            <h2>Your Wishlist is Empty!!!</h2>
+        </div>
+        <div class="row justify-content-center">
+            <p><a href="/shop" class="btn btn-primary">Shop Now</a></p>
+        </div>
+    </section>
+    <% } %>
 <%- include('../users/layouts/user-footer.ejs') %>
