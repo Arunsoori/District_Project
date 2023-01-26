@@ -50,6 +50,8 @@ user_route.get('/cart',userController.countItem,userController.loadCart);
 user_route.get('/removeCart/:id',userController.removeCart);
 user_route.get('/removeWish/:id',userController.countItem,userController.removeWish);
 user_route.get('/checkout',userController.checkout);
+user_route.get('/account',userController.account);
+
 
 user_route.post('/changeItemQty/',userController.changeItemQty);
 
@@ -62,6 +64,21 @@ user_route.post('/changeItemQty/',userController.changeItemQty);
 
 user_route.post('/verify',userController.verifyUser);
 user_route.post('/register',userController.insertUser,userController.getOtp)
+user_route.post('/address',userController.addAddress)
+
+user_route.get('/editaddress/:id',userController.editAddressPage)
+
+user_route.post('/updateaddress/:id',userController.updateAddress)
+
+user_route.get('/deleteaddress/:id',userController.deleteAddress )
+user_route.post('/applycoupon',userController.applyCoupon )
+
+user_route.post('/placeOrder',userController.placeOrder)
+
+
+
+
+
 
 
 

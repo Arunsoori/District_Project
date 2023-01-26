@@ -30,6 +30,21 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    address :[
+        {
+   Name: String,
+   Lastname: String,
+   House: String,
+   Post: String,
+   Pin: String,
+   City: String,
+   District:String,
+   State: String,
+   Country: String,
+    
+
+        
+}],
 
 })
 

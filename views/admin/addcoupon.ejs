@@ -1,0 +1,71 @@
+<%- include('../admin/layouts/admin-header.ejs') %>
+
+
+
+
+
+
+<body>
+    <div class="screen-overlay"></div>
+    
+    <main class="main-wrap">
+        
+        <section class="content-main">
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Coupon</h2>
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <!-- <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="/admin/addcoupon"  method="post" ">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>1. General info</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Coupon name</label>
+                                        <input type="text" name="name" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Coupon code</label>
+                                        <input type="number" name="code" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Minum bill amount</label>
+                                        <input type="number" name="bill" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Cap amount</label>
+                                        <input type="number" name="cap" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Discount(%)</label>
+                                        <input type="number" name="discount" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Expiry date</label>
+                                        <input type="date" name="date" placeholder="Type here" class="form-control">
+                                    </div>
+                                    
+                            
+                             
+                            <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </form>
+        </section> <!-- content-main end// -->
+        <%- include('../admin/layouts/admin-footer.ejs') %>
+

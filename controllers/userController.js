@@ -6,6 +6,8 @@ const session = require("express-session");
 const productModel = require("../models/productModel");
 const categoryModel = require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
+const couponModel = require("../models/couponModel");
+
 const sendOtp = require("../utils/nodemailer");
 const { render } = require("../routes/userRoute");
 const wishlistModel = require("../models/wishlistModel");
@@ -46,14 +48,7 @@ const insertUser = async (req, res, next) => {
     next(error);
   }
 };
-// if (userData){
-//     res.render('home')
-//     // res.send('hello')
-// } else{
-//     res.render('registration',{message:'your registration failed'})
-//     // res.send('helhiiiiilo')
 
-// }
 
 const home = async (req, res) => {
   try {
@@ -114,7 +109,7 @@ const singleProdetails = async (req, res) => {
   try {
     const id = req.params.id;
     const product = await productModel.findOne({ _id: id });
-    res.render("singleprodetails", { product });
+    res.render("singleprodetails", { product,login: req.session.userLogin,count });
   } catch (error) {
     console.log(error.message);
   }
@@ -305,13 +300,7 @@ const addToWishlist = async (req, res, next) => {
   }
 };
 
-// const cart404 = async (req, res, next) => {
-//   try {
-//     res.render("cart404");
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
+
 
 const verifyOtpPage = async (req, res) => {
   try {
@@ -428,12 +417,237 @@ const countItem = async (req, res, next) => {
 };
 const checkout = async (req, res) => {
   try {
+    userId= req.session.userId
+
+     const userdata = await userModel.findOne({_id:userId})
+     let addressdata = userdata.address
+     let Cart = await cartModel
+     .findOne({ userId: userId })
+     
+   console.log(Cart);
+   if (Cart) {
+     let items = Cart.cartItems;
+
+let subtotal = Cart.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
     
-    res.render("checkout",{ login: req.session.userLogin, count });
+    res.render("checkout",{ login: req.session.userLogin, count ,addressdata,subtotal});
+ } } catch (error) {
+    console.log(error.message);
+  }
+};
+const account = async (req, res) => {
+  try {
+    userId= req.session.userId
+
+     const userdata = await userModel.findOne({_id:userId})
+     let addressdata = userdata.address
+     const orderdata = await orderModel.findOne({_id:userId})
+
+     
+    //  console.log(addressdata);
+
+    res.render("account",{ login: req.session.userLogin, count ,addressdata, orderdata});
   } catch (error) {
     console.log(error.message);
   }
 };
+const addAddress = async (req, res, next) => {
+  try{
+  console.log(req.body);
+  const userId =req.session.userId
+
+  
+  let newaddress ={
+    'Name': req.body.name,
+  'Lastname': req.body.lastname,
+  'House': req.body.house,
+  'Post': req.body.post,
+  'Pin': req.body.pin,
+  'City': req.body.city,
+  'District': req.body.district,
+  'State': req.body.state,
+  'Country':req.body.Country,
+  }
+    
+
+  await userModel.updateOne({ _id:userId },{ $push: { address: newaddress}}).then(() => {
+    if (req.headers.referer === "http://localhost:3000/checkout"){
+      res.redirect('/checkout')
+
+    }else{
+        res.redirect('/account')
+        next();
+      }
+    })
+      .catch((error) => {
+        console.log(error);
+        res.redirect("/account");
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+ const editAddressPage = async(req,res,next)=>{
+  console.log("............");
+  try{
+    const addressId = req.params.id
+    const userId= req.session.userId
+
+    let user = await userModel.findOne({_id:userId})
+    console.log(user);
+    user.address.forEach((row)=>{
+      if(row._id.toString()==addressId.toString()){
+        res.json(row)
+      }
+    })
+     
+  }catch(err){
+console.log(err);
+  }
+};
+ const updateAddress = async(req,res)=>{
+  try{
+    const addressId = req.params.id
+    const userId= req.session.userId
+
+  let addressUpdate ={
+    'address.$.Name':req.body.name,
+    'address.$.House':req.body.house,
+    'address.$.Post':req.body.post,
+    'address.$.City':req.body.city,
+    'address.$.District':req.body.district,
+    'address.$.State':req.body.state,
+    'address.$.Pin':req.body.pin
+  }
+  
+  await userModel.updateOne({_id:userId,'address._id':addressId},{$set:addressUpdate}).then(()=>{
+    res.redirect('/account')
+  })
+}catch(err){
+  console.log(err);
+}
+
+}
+const deleteAddress = async (req, res, next) => {
+  console.log("kkkkkkkkklllllllllll");
+  try {
+      await userModel.updateOne(
+          {
+              $and: [
+                  { _id: req.session.userId },
+                  { "address._id": new mongoose.Types.ObjectId(req.params.id) }
+              ]
+          },
+          {
+              $pull:{address: {_id: req.params.id}}
+          })
+          .then(()=>{
+            if (req.headers.referer === "http://localhost:3000/checkout"){
+      res.redirect('/checkout')
+
+    }else{
+              res.redirect('/account')
+          }})
+  } catch (error) {
+      next(error)
+  }
+}
+const placeOrder = (req, res) => {
+  
+  try {
+    console.log("''''''''")
+    let order = req.body
+    console.log(order);
+    
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+  const applyCoupon = async(req,res)=>{
+    console.log("apply coupon in");
+    try{
+let Id= req.session.userId
+// let subtotal=""
+let userData= await userModel.findById({_id:Id})
+console.log(userData);
+let cartData = await cartModel.findOne({userId:Id})
+console.log(cartData);
+var couponCode = req.body.code
+console.log(couponCode);
+let couponDet = await couponModel.findOne({ Code: couponCode , used_user: { $nin: [Id] }})
+// , used_user: { $nin: [Id] }
+console.log(couponDet);
+      if (couponDet) {
+        let date = new Date(couponDet.Expire)
+        const currentDate = new Date();
+        if (date.getTime() < currentDate.getTime()) {
+          res.json({ expired: true });
+
+    }
+  
+  else {
+let subtotal = cartData.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
+console.log(subtotal);
+
+    if (subtotal > couponDet.Minbill) {
+
+      let discount = Math.round(subtotal * (couponDet.Discount / 100))
+console.log(discount);
+      if (discount > couponDet.Cap) {
+        let maxDiscount = Math.round(couponDet.Cap)
+        // console.log(maxDiscount, "maxdis");
+         subtotal = subtotal- maxDiscount
+         console.log(subtotal);
+        // console.log(total, "totalmax");
+        req.session.coupon = couponCode
+
+        res.json({ success: true, newTotal: subtotal, discount: maxDiscount });
+}else{
+  subtotal = subtotal - discount
+              // console.log(subtotal, "max");
+              // console.log(discount, "dis");
+              req.session.coupon = couponCode
+              res.json({ success: true, newTotal: subtotal, discount: discount });
+}
+await couponDet.updateOne(
+  {
+    $addToSet: {
+      used_user: Id,
+    },
+  }
+);
+} else {
+  req.session.coupon = null
+  res.json({ notapplicable: true });
+  console.log("notapp");
+}
+}
+} else {
+req.session.coupon = null
+res.json({ success: false });
+console.log("invalid");
+}
+
+}
+catch (err) {
+req.session.coupon = null
+res.json({ success: false });
+console.log(err);
+};
+
+}
+
+
+
+
+  
+
+
+
+  
+  
+
 
 module.exports = {
   loadRegister,
@@ -450,12 +664,21 @@ module.exports = {
   loadCart,
   addToCart,
   // cart404,
+  editAddressPage,
+  updateAddress,
   addToWishlist,
   removeCart,
   countItem,
   removeWish,
   changeItemQty,
   checkout,
+  account,
+  addAddress,
+  deleteAddress,
+  placeOrder,
+  applyCoupon
+
+  
   
 
 };

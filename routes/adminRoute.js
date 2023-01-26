@@ -29,6 +29,12 @@ admin_route.get("/addproducts", adminController.loadAddproducts);
 admin_route.get("/home", adminController.homePage);
 admin_route.get("/productlist", adminController.loadProductlist);
 admin_route.get("/editproduct/:id", adminController.loadEditproduct);
+admin_route.get("/addcoupon", adminController.loadAddcoupon);
+admin_route.get("/couponlist", adminController.loadCouponList);
+admin_route.get("/editcoupon/:id", adminController.editCoupon);
+
+
+
 
 
 
@@ -50,5 +56,9 @@ admin_route.post("/updateProduct/:id",uploadOptions.array("image", 5), adminCont
 
 // admin_route.post('/addproducts',adminController.addProducts)
 admin_route.post( "/addproducts", uploadOptions.array("image", 4), adminController.addProducts);
+admin_route.post("/addcoupon", adminController.addCoupon);
+admin_route.post("/updatecoupon/:id",adminController.updateCoupon);
+
+
 
 module.exports = admin_route;

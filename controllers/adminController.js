@@ -6,8 +6,11 @@ const session = require("express-session");
 const adminModel = require("../models/adminModel");
 const userModel = require("../models/userModel");
 const categoryModel = require("../models/categoryModel");
+const couponModel = require("../models/couponModel");
+
 const productModel = require("../models/productModel");
-const fs = require("fs")
+const fs = require("fs");
+const { findById } = require("../models/adminModel");
 
 
 
@@ -58,12 +61,13 @@ const doLogin = async (req, res) => {
     console.log(isMatch);
     if (!isMatch) {
       return res.redirect("/admin");
-    }
+    }else{
     
-    req.session.adminId = user._id
+    req.session.adminId = admin._id
     req.session.adminLogin = true;
     
     res.render("dashboard");
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -326,6 +330,89 @@ const loadEditproduct = async (req, res) => {
   })
 
 }
+const loadAddcoupon =async(req,res)=>{
+  if (req.session.adminLogin){
+    try{
+       
+        
+    res.render('addcoupon')
+    }
+    catch(error){
+      console.log(error.message);
+  }
+}
+
+}
+const loadCouponList = async (req, res) => {
+console.log("ethi");
+  try {
+    const coupons = await couponModel.find()
+    console.log(coupons);
+
+    res.render("couponlist", {coupons});
+  } catch (error) {
+    console.log(error.message);
+  }
+  
+}
+const addCoupon = (req, res) => {
+  
+  try{
+  
+  const coupons = new couponModel({
+    Name: req.body.name,
+    Code: req.body.code,
+    Minbill: req.body.bill,
+    Cap: req.body.cap,
+    Discount: req.body.discount,
+    Expire: req.body.date
+  })
+  coupons.save()
+  .then(() => {
+    next();
+  })
+  .catch((error) => {
+    console.log(error);
+    res.redirect("/admin/couponlist");
+  });
+} catch (error) {
+next(error);
+}
+};
+const editCoupon = async(req,res)=>{
+ const couponId = req.params.id
+const couponDetails = await couponModel.findById({_id:couponId})
+
+  res.render('editcoupon',{couponDetails})
+}
+const updateCoupon= async(req, res) => {
+  console.log("LLL");
+  try{
+
+  let id = new mongoose.Types.ObjectId(req.params.id)
+  
+  
+  let updatedCoupon ={
+  
+    Name: req.body.name,
+    Code: req.body.code,
+    Cap: req.body.cap,
+    Discount: req.body.discount,
+    Expiry:req.body.expiry,
+    Minbill:req.body.bill,
+    Date : req.body.date
+   
+}
+await couponModel.updateOne({_id:id},{$set:updatedCoupon}).then(()=>{
+  res.redirect('/account')
+})
+}catch(err){
+console.log(err);
+}
+  }
+
+
+  
 
 
 
@@ -355,6 +442,11 @@ module.exports = {
   getdeleteProduct,
   loadEditproduct,
    updateProduct,
+   loadAddcoupon,
+   loadCouponList,
+   addCoupon,
+   editCoupon,
+   updateCoupon,
   
    
   
