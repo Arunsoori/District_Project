@@ -149,6 +149,7 @@ const loadAddproducts =async(req,res)=>{
 const loadProductlist = async (req, res) => {
   try {
     const products = await productModel.find()
+    console.log(products);
 
     res.render("productlist", {products});
   } catch (error) {
@@ -410,6 +411,30 @@ await couponModel.updateOne({_id:id},{$set:updatedCoupon}).then(()=>{
 console.log(err);
 }
   }
+  const orderList = async (req,res)=>{
+    try {
+      // const coupons = await couponModel.find(
+      // console.log(coupons);
+  
+      res.render("orderlist");
+    } catch (error) {
+      console.log(error.message);
+    }
+  
+  }
+  const orderDetails = async (req,res)=>{
+    try {
+      // const coupons = await couponModel.find(
+      // console.log(coupons);
+  
+      res.render("orderdetails");
+    } catch (error) {
+      console.log(error.message);
+    }
+  
+  }
+
+
 
 
   
@@ -447,6 +472,8 @@ module.exports = {
    addCoupon,
    editCoupon,
    updateCoupon,
+   orderList,
+   orderDetails,
   
    
   

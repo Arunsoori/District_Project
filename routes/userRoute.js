@@ -51,6 +51,12 @@ user_route.get('/removeCart/:id',userController.removeCart);
 user_route.get('/removeWish/:id',userController.countItem,userController.removeWish);
 user_route.get('/checkout',userController.checkout);
 user_route.get('/account',userController.account);
+user_route.get('/forgotpassword',userController.forgotpasswordPage);
+user_route.get('/resetpassword',userController.resetPasswordPage)
+user_route.get('/useorderdetails/:id',userController.useorderDetails)
+
+
+
 
 
 user_route.post('/changeItemQty/',userController.changeItemQty);
@@ -73,7 +79,11 @@ user_route.post('/updateaddress/:id',userController.updateAddress)
 user_route.get('/deleteaddress/:id',userController.deleteAddress )
 user_route.post('/applycoupon',userController.applyCoupon )
 
-user_route.post('/placeOrder',userController.placeOrder)
+user_route.post('/placeorder',userController.placeOrder)
+user_route.post('/forgotpassword',userController.forgotPassword)
+user_route.post('/resetpassword',userController.resetPassword)
+
+
 
 
 

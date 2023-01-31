@@ -7,13 +7,28 @@ const productModel = require("../models/productModel");
 const categoryModel = require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
 const couponModel = require("../models/couponModel");
+const orderModel = require("../models/orderModel");
+
+const nodemailer = require('nodemailer');
+const randomstring = require('randomstring');
 
 const sendOtp = require("../utils/nodemailer");
 const { render } = require("../routes/userRoute");
 const wishlistModel = require("../models/wishlistModel");
+const { findById } = require("../models/userModel");
 
 let otp = "";
 let count = { cart: 0, wish: 0 };
+let transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false,
+  requireTLS: true,
+  auth:{
+      user:process.env.SMTP_USER ,
+      pass: process.env.SMTP_PASS
+  }
+})
 const loadRegister = async (req, res) => {
   try {
     res.render("registration");
@@ -323,6 +338,14 @@ const getOtp = async (req, res, next) => {
       next(error);
     });
 };
+const forgotpasswordPage =(req,res,next)=>{
+  try {
+    res.render("forgotpassword");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 
 const verifyUser = async (req, res, next) => {
   console.log(">>>>>>>>>>>>>>");
@@ -440,13 +463,19 @@ const account = async (req, res) => {
     userId= req.session.userId
 
      const userdata = await userModel.findOne({_id:userId})
+    //  console.log(userdata);
      let addressdata = userdata.address
-     const orderdata = await orderModel.findOne({_id:userId})
+    //  console.log(addressdata,"address");
+     const orderdata = await orderModel.find({userId:userId})
+    //  console.log(orderdata,"orderdata");
+     let orderinfo = await orderModel.findOne({ userId: userId}).populate('products.productId')
+    //  console.log(orderinfo,"orderinfo");
+     let pro =orderinfo.products
 
      
     //  console.log(addressdata);
 
-    res.render("account",{ login: req.session.userLogin, count ,addressdata, orderdata});
+    res.render("account",{ login: req.session.userLogin, count ,addressdata, pro,orderdata});
   } catch (error) {
     console.log(error.message);
   }
@@ -552,18 +581,123 @@ const deleteAddress = async (req, res, next) => {
       next(error)
   }
 }
-const placeOrder = (req, res) => {
+const placeOrder = async(req, res,next) => {
   
   try {
     console.log("''''''''")
     let order = req.body
     console.log(order);
+    userId= req.session.userId
+    const addressId = req.body.addressid
     
+   
+
     
-  } catch (error) {
-    console.log(error.message);
+    let addressDetails = await userModel.findOne({ _id: userId }, { address: { $elemMatch: { _id: addressId } } }).lean();
+    let addressonly = addressDetails.address
+   console.log(addressonly);
+
+
+   let cartData = await cartModel.findOne({userId:userId})
+
+console.log(cartData);
+let subtotal = cartData.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
+console.log(subtotal);
+
+   if (req.session.coupon != null) {
+    const couponData = req.session.coupon
+    console.log(couponData);
+    usercoupon = await couponModel.findOne({ Code: couponData })
+    console.log(usercoupon);
+    couponss = {
+      name: usercoupon.Name,
+      code: usercoupon.Code,
+      discount: usercoupon.Discount,
+    }
+    if (subtotal > usercoupon.Minbill) {
+
+      let discount = Math.round(subtotal * (usercoupon.Discount / 100))
+  console.log(discount);
+      if (discount > usercoupon.Cap) {
+        let maxDiscount = Math.round(usercoupon.Cap)
+        // console.log(maxDiscount, "maxdis");
+         subtotal = subtotal- maxDiscount
+         console.log(subtotal);
+        // console.log(total, "totalmax");
+        req.session.coupon = couponCode
+  
+        
+      }
+  
+  else{
+  subtotal = subtotal - discount
+              // console.log(subtotal, "max");
+              // console.log(discount, "dis");
+              req.session.coupon = couponCode
+              
+    
   }
-};
+
+    }
+
+  } else {
+
+    couponss = {
+      Name: 'nil',
+      Code: 'nil',
+      Discount: 0,
+    }
+
+  }
+  let prods =cartData.cartItems
+  console.log(prods,"prods");
+  let status = order.payment_option === 'COD' ? 'placed': 'pending'
+
+  
+   const orderDetails = new orderModel({
+    userId: req.session.userId,
+    total : subtotal,
+    products:prods,
+    payment: {
+      pay_method: order.payment_option,
+      pay_status: status
+    },
+    address: [{ 
+      name : addressonly[0].Name,
+      house: addressonly[0].House,
+      post : addressonly[0].Post,
+
+      city : addressonly[0].City,
+      state: addressonly[0].State,
+      district:addressonly[0].District,
+    
+
+     }],
+
+  })
+  await orderDetails
+  .save()
+  .then(() => {
+    req.session.coupon=null
+    console.log("jjjjjjjjjjjj");
+    // res.json({ status: true });
+  })
+  .catch((error) => {
+    // console.log(error);
+    next(error);
+  });
+
+  }
+ catch (error) {
+// console.log(error);
+next(error);
+}
+  }
+
+    // cartItems: [{ productId, quantity: 1, total: product.price }],
+    
+    
+
   const applyCoupon = async(req,res)=>{
     console.log("apply coupon in");
     try{
@@ -637,6 +771,113 @@ console.log(err);
 };
 
 }
+const forgotPassword= async (req, res) => {
+
+  try {
+    const email = req.body.email
+    
+    const oldUser = await userModel.findOne({ email: email })
+    console.log(oldUser);
+    if (oldUser) {
+      const randomStringg = randomstring.generate()
+      console.log(randomStringg);
+      const updatedData = await userModel.updateOne({ email: email }, { $set: { token: randomStringg } })
+      // sendResetPasswordMail(oldUser.name, oldUser.email, randomStringg)
+
+      var mailOptions = {
+        to: oldUser.email,
+        from: 'bmart@gmail.com',
+        subject: "Link for resetting password: ",
+        html: '<p>Hi ' + oldUser.name + ',Forgot password?</p> <p> Click the link below to reset password </p><a href="http://localhost:3000/resetpassword?token=' + randomStringg + '">Click here</a>' // html body
+      }
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log(mailOptions.html);
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      })
+
+      req.session.message = {
+        type: 'primary',
+        message: 'Please check your mail and reset your password'
+      }
+      res.redirect('/forgotpassword')
+    } else {
+      req.session.message = {
+        type: 'danger',
+        message: 'No account with the entered email id'
+      }
+      res.redirect('/forgotpassword')
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+const resetPasswordPage = async (req, res) => {
+  try {
+    const token = req.query.token
+    
+    const tokenData = await userModel.findOne({ token: token })
+    if (tokenData) {
+      res.render('newpassword', { user_id: tokenData._id, title: 'reset password' })
+    } else {
+      req.session.message = {
+        type: 'danger',
+        message: 'Link has been expired'
+      }
+      res.redirect('/forgot-password')
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+const resetPassword= async (req, res) => {
+  try {
+    const password = req.body.newpassword
+    const user_id = req.body.user_id
+    console.log(user_id);
+    const saltRounds = 10
+    const newPass = await bcrypt.hash(password, saltRounds)
+    const updatedData = await userModel.findByIdAndUpdate({ _id: user_id }, { $set: { password: newPass, token: '' } }, { new: true })
+    req.session.message = {
+      type: 'success',
+      message: 'User password has been reset'
+    }
+
+    res.redirect('/login')
+  } catch (error) {
+    console.log(error);
+  }
+}
+const useorderDetails =async (req,res)=>{
+try{
+  const userId = req.session.userId
+
+ console.log(userId);
+let orderId = req.params.id
+
+let  userData = await userModel.findById({_id:userId})
+console.log(">>>>",userData);
+
+let orderinfo = await orderModel.findOne({ userId: userId, _id:orderId}).populate('products.productId')
+let pro =orderinfo.products
+
+
+
+
+  res.render('useorderdetails',{login: req.session.userLogin,count,pro, orderinfo,userData})
+
+}catch (error) {
+    console.log(error.message);
+
+
+}
+}
+
+
 
 
 
@@ -661,6 +902,11 @@ module.exports = {
   verifyUser,
   getOtp,
   verifyOtpPage,
+  forgotpasswordPage,
+  forgotPassword,
+  resetPassword,
+  resetPasswordPage,
+
   loadCart,
   addToCart,
   // cart404,
@@ -676,9 +922,10 @@ module.exports = {
   addAddress,
   deleteAddress,
   placeOrder,
-  applyCoupon
-
+  applyCoupon,
+  useorderDetails,
   
   
+  
 
-};
+}

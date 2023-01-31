@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    token:{
+        type:String,
+        default:'empty'
+      },
     address :[
         {
    Name: String,

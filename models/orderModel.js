@@ -5,9 +5,9 @@ const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref:"admin_users"
+        ref:"user"
       },
-      address: {
+      address: [{
         name: {
           type: String,
         },
@@ -35,16 +35,13 @@ const orderSchema = new mongoose.Schema({
           type: Number,
            
         }
-      },
+      }
+      ],
       total:{
         type: Number,    
       },
-      discount_amount:{
-        type: Number, 
-      },
-      grand_total:{
-        type: Number, 
-      },
+      
+      
       order_status: {
         type: String,
         default: 'pending'
@@ -56,12 +53,35 @@ const orderSchema = new mongoose.Schema({
         pay_status: { type: String, default: 'pending' }
       },
       products: [{
-        item: { type: mongoose.Schema.Types.ObjectId,ref:'product'   },
+        productId: {  type: mongoose.Schema.Types.ObjectId,
+          ref:'Product'   },
          quantity: { type: Number,   },
-        price: { type: Number,   },
+        total: { type: Number,   },
          
       }]
       ,
+      delivery_status: {
+        ordered:{
+          state:{type:Boolean, default:false},
+          date:{type:Date},
+      },
+        shipped: {
+          state: { type: Boolean, default: false },
+          date: { type: Date },
+        },
+        out_for_delivery: {
+          state: { type: Boolean, default: false },
+          date: { type: Date },
+        },
+        delivered: {
+          state: { type: Boolean, default: false },
+          date: { type: Date },
+        },
+        cancelled: {
+          state: { type: Boolean, default: false },
+          date: { type: Date },
+        }
+      },
       
      
       ordered_date: {

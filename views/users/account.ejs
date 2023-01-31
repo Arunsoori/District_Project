@@ -117,12 +117,16 @@
                                             <div class="card-body">
                                                 <div class="table-responsive">
                                                     <table class="table">
+                                                        
+                                                        
                                                         <thead>
                                                             <tr>
-                                                                <th>Order</th>
-                                                                <th>Date</th>
-                                                                <th>Status</th>
+                                                                <th>Ordered On</th>
                                                                 <th>Total</th>
+                                                                <th>Payment method</th>
+                                                                <th>Order status</th>
+                                                                <th>Delivery status</th>
+
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -130,28 +134,17 @@
                                     <% orderdata.forEach(function(order){ %>
 
                                                             <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td><%= order.Paymentmethod</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                            <% }) %>
+                                                                <td><%= order.ordered_date  %></td>
+                                                                <td><%= order.total %></td>
+                                                                <td><%= order.payment.pay_method %></td>
+                                                                <td><%= order.order_status   %></td>
+                                                                <td><%= order.order_status %></td>
 
-                                                            <!-- <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
+                                                                <td><a href="/useorderdetails/<%= order._id %>" class="btn-small d-block">View</a></td>
                                                             </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr> -->
+
+                            <% }) %>
+                                                           
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -193,7 +186,7 @@
                                                         <h5 class="mb-0">Billing address</h5>
                                                     </div>
                                                     <div class="card-body">
-                                                        <address><%= address.Name  %> <br> <%= address.Last  %> <br> <%= address.House  %> <br> ,<br> <%= address.Post  %> <br><%= address.Pin  %><br><%= address.City  %> <br> <%= address.District  %> <br><%= address.State  %> <br> <%= address.Country  %> <br>  </address>
+                                                        <address><%= address.Name  %> <br> <%= address.Last  %> <br> <%= address.House  %> <br> <%= address.Post  %> <br><%= address.Pin  %><br><%= address.City  %> <br> <%= address.District  %> <br><%= address.State  %> <br> <%= address.Country  %> <br>  </address>
                                                         <p><%= address.Country  %></p>
                                                         <a data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="editaddress('<%= address._id %>')"href="" class="btn-small">Edit</a> &nbsp; &nbsp; &nbsp;
                                                         <a href="/deleteaddress/<%=address._id%>" class="btn-small">Delete</a>

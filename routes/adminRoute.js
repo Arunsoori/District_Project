@@ -32,6 +32,10 @@ admin_route.get("/editproduct/:id", adminController.loadEditproduct);
 admin_route.get("/addcoupon", adminController.loadAddcoupon);
 admin_route.get("/couponlist", adminController.loadCouponList);
 admin_route.get("/editcoupon/:id", adminController.editCoupon);
+admin_route.get("/orderlist", adminController.orderList);
+admin_route.get("/orderdetails", adminController.orderDetails);
+
+
 
 
 
