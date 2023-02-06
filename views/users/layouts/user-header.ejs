@@ -5,7 +5,7 @@
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:20:36 GMT -->
 <head>
     <meta charset="utf-8">
-    <title>Evara - eCommerce HTML Template</title>
+    <title>district 11</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -214,7 +214,13 @@
                                         <li><a href="#"><img src="/assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                     </ul>
                                 </li>
-                                <li><i class="fi-rs-user"></i><a href="/login">Log In / Sign Up</a></li>
+                                <% if (login.userLogin) { %>
+                                <li><i class="fi-rs-user"></i><a href=""><%= login.username %>  </a></li>
+                                <li><i class=""></i><a href="/logout">logout  </a></li>
+
+                                <% } else { %>
+                                    <li><i class="fi-rs-user"></i><a href="/login">Log In </a></li>
+                                    <% } %>
                             </ul>
                         </div>
                     </div>
@@ -227,10 +233,10 @@
                     <div class="logo logo-width-1">
                         <a href="index.html"><img src="/assets/imgs/theme/logo district.png" alt="logo"></a>
                     </div>
-                    <div class="header-right">
-                        <div class="search-style-2">
+                    <div class="header-right d-flex justify-content-end">
+                        <!-- <div class="search-style-2">
                             <form action="#">
-                                <select class="select-active">
+                                <!-- <select class="select-active">
                                     <option>All Categories</option>
                                     <option>Women's</option>
                                     <option>Men's</option>
@@ -242,13 +248,13 @@
                                     <option>Luggage</option>
                                     <option>Shoes</option>
                                     <option>Mother & Kids</option>
-                                </select>
-                                <input type="text" placeholder="Search for items...">
+                                </select> -->
+                                <!-- <input type="text" placeholder="">
                             </form>
-                        </div>
-                        <div class="header-action-right">
-                            <div class="header-action-2">
-                                <% if (login) { %>
+                        </div> --> 
+                        <div class="header-action-right ">
+                            <div class="header-action-2 ">
+                                <% if (login.userLogin) { %>
 
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
@@ -312,7 +318,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="index.html"><img src="/assets/imgs/theme/logo.svg" alt="logo"></a>
+                        <a href="index.html"><img src="/assets/imgs/theme/logo district.png" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
                         
@@ -351,18 +357,18 @@
                                             <li><a href="shop-compare.html">Shop – Compare</a></li>
                                         </ul> -->
                                     </li>
-                                    <li class="position-static"><a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
+                                    <!-- <li class="position-static"><a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
                                         
                                     </li>
                                     <li><a href="blog-category-grid.html">Blog <i class="fi-rs-angle-down"></i></a>
                                         
-                                    </li>
+                                    </li> -->
                                     <li><a href="/account">My account <i class="fi-rs-angle-down"></i></a>
                                         
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <a href="page-contact.html">Contact</a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </nav>
                         </div>
@@ -435,4 +441,9 @@
             </div>
         </div>
     </header>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
    

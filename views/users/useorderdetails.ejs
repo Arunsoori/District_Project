@@ -2,11 +2,12 @@
 <%- include('../users/layouts/user-header.ejs') %>
 
 
+
 <section class="content-main container">
     <div class="content-header">
         <div>
             <h2 class="content-title card-title">Order detail</h2>
-            <p>Details for Order ID: 3453012</p>
+            <p>Details for Order ID:  <%= orderinfo._id %>  </p>
         </div>
     </div>
     <div class="card">
@@ -14,11 +15,11 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
                     <span>
-                        <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b>
+                        <i class="material-icons md-calendar_today"></i> <b>  <%= orderinfo.ordered_date %> </b>
                     </span> <br>
-                    <small class="text-muted">Order ID: 3453012</small>
+                    <small class="text-muted">Order ID:   <%= orderinfo._id %> </small>
                 </div>
-                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                <!-- <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
                         <option>Change status</option>
                         <option>Awaiting payment</option>
@@ -28,7 +29,7 @@
                     </select>
                     <a class="btn btn-primary" href="#">Save</a>
                     <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
-                </div>
+                </div> -->
             </div>
         </header> <!-- card-header end// -->
         <div class="card-body">
@@ -69,7 +70,7 @@
                         <div class="text">
                             <h6 class="mb-1">Deliver to</h6>
                             <p class="mb-1">
-                                <%= orderinfo.address %> 
+                                <%= orderinfo.address[0].name %> <br> <%=orderinfo.address[0].house %><br> <%=orderinfo.address[0].post %><br> <%=orderinfo.address[0].city %><br> <%=orderinfo.address[0].state %>
                             </p>
                             <a href="#">View profile</a>
                         </div>
@@ -143,16 +144,17 @@
                             Phone: +1 (800) 555-154-52
                         </p>
                     </div>
-                    <div class="h-25 pt-4">
+                    <!-- <div class="h-25 pt-4"> -->
                         <!-- <div class="mb-3">
                             <label>Notes</label>
                             <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
                         </div> -->
-                        <button class="btn btn-primary">Save note</button>
-                    </div>
+                        <!-- <button class="btn btn-primary">Save note</button> -->
+                    <!-- </div> -->
                 </div> <!-- col// -->
             </div>
         </div> <!-- card-body end// -->
     </div> <!-- card end// -->
 </section> <!-- content-main end// -->
 <%- include('../users/layouts/user-footer.ejs') %>
+

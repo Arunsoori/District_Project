@@ -1,6 +1,6 @@
 <%- include('../admin/layouts/admin-header.ejs') %>
 
-<body>
+ 
 
 
         <section class="content-main">
@@ -19,8 +19,8 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
+                                <h6 class="mb-1 card-title">Products</h6>
+                                <span><%= products.length %> </span>
                                 <span class="text-sm">
                                     Shipping fees are not included
                                 </span>
@@ -33,7 +33,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                                <h6 class="mb-1 card-title">Categories</h6> <span>  <%=categories.length  %> </span>
                                 <span class="text-sm">
                                     Excluding orders in transit
                                 </span>
@@ -46,7 +46,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span>  <%=orders.length%> </span>
                                 <span class="text-sm">
                                     In 19 Categories
                                 </span>
@@ -59,7 +59,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>$6,982</span>
+                                <h6 class="mb-1 card-title">Users</h6> <span> <%= users.length  %>   </span>
                                 <span class="text-sm">
                                     Based in your local time.
                                 </span>
@@ -70,13 +70,16 @@
             </div>
             <div class="row">
                 <div class="col-xl-8 col-lg-12">
-                    <div class="card mb-4">
+                    <!-- <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Sale statistics</h5>
                             <canvas id="myChart" height="120px"></canvas>
                         </article>
-                    </div>
-                    <div class="row">
+                    </div> -->
+                    <div class="card bg-white col-12 col-md-5  mt-2" id="salesContainer" style="height: 300px; width: 100%;">
+                        <canvas id="sales" style="height: 100%; width: 100%;"> </canvas>
+                      </div>
+                    <!-- <div class="row">
                         <div class="col-lg-5">
                             <div class="card mb-4">
                                 <article class="card-body">
@@ -206,9 +209,9 @@
                                 </article>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
-                <div class="col-xl-4 col-lg-12">
+                <!-- <div class="col-xl-4 col-lg-12">
                     <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Revenue Base on Area</h5>
@@ -240,9 +243,9 @@
                             </div>
                         </article>
                     </div>
-                </div>
+                </div> -->
             </div>
-            <div class="card mb-4">
+            <!-- <div class="card mb-4">
                 <header class="card-header">
                     <h4 class="card-title">Latest orders</h4>
                     <div class="row align-items-center">
@@ -278,8 +281,8 @@
                             </div>
                         </div>
                     </div>
-                </header>
-                <div class="card-body">
+                </header> -->
+                <!-- <div class="card-body">
                     <div class="table-responsive">
                         <div class="table-responsive">
                             <table class="table align-middle table-nowrap mb-0">
@@ -455,9 +458,9 @@
                             </table>
                         </div>
                     </div> <!-- table-responsive end// -->
-                </div>
+                <!-- </div> --> -->
             </div>
-            <div class="pagination-area mt-30 mb-50">
+            <!-- <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
                         <li class="page-item active"><a class="page-link" href="#">01</a></li>
@@ -468,9 +471,48 @@
                         <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
                     </ul>
                 </nav>
-            </div>
+            </div> -->
+            
         </section> <!-- content-main end// -->
+        
 
-</body>
+
+           
 <%- include('../admin/layouts/admin-footer.ejs') %>
-       
+
+
+
+ <script>
+     
+ 
+    let dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+   
+      var ctx3 = $("#sales");
+      const SalesData = {
+        labels: dayNames,
+        datasets: [{
+          label: 'Weekly Sales',
+          data: <%= JSON.stringify(SalesCount.map(d=>d.count)) %>,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          fill:false
+        }]
+        
+      };
+      var options = {
+        responsive: true,
+        title: {
+          display: true,
+          position: "top",
+          text: "Weekly Sales",
+          fontSize: 18,
+          fontColor: "#111"
+        },
+         
+      };
+      let salesGraph = new Chart(ctx3, {
+        type: "line",
+        data: SalesData,
+        options: options
+      });
+    </script> -->

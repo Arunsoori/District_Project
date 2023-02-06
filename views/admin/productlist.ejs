@@ -42,11 +42,13 @@
             </div>
             
             <div class="col-lg-2 col-sm-2 col-4 col-action text-end d-flex">
-               <div class="me-2"> 
+               
+                <button style="width: 100px" class="btn btn-sm font-sm rounded btn-brand mx-1">
                 <a href="/admin/editproduct/<%= product._id %>" class="btn btn-sm font-sm rounded btn-brand">
                     <i class="material-icons md-edit"></i> Edit
                 </a>
-            </div>
+            </button>
+            
             
             <div>
                 <% if (product.status) { %>

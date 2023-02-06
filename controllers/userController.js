@@ -11,14 +11,24 @@ const orderModel = require("../models/orderModel");
 
 const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
+const Razorpay = require('razorpay')
 
 const sendOtp = require("../utils/nodemailer");
 const { render } = require("../routes/userRoute");
 const wishlistModel = require("../models/wishlistModel");
 const { findById } = require("../models/userModel");
+const { userSession } = require("../middleware/auth");
+const { userInfo } = require("os");
 
 let otp = "";
 let count = { cart: 0, wish: 0 };
+
+var instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEYID,
+  key_secret: process.env.RAZORPAY_SECRET
+})
+
+
 let transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -67,13 +77,33 @@ const insertUser = async (req, res, next) => {
 
 const home = async (req, res) => {
   try {
+    const products = await productModel.find();
+
     
-    res.render("home", { login: req.session.userLogin, count });
+    res.render("home", { login: req.session, count,products });
   } catch (error) {
     console.log(error.message);
   }
 };
 const shop = async (req, res) => {
+  try{
+const query =req.query.category
+  
+  if(query){
+    try{
+    const categories = await categoryModel.find();
+    const products = await productModel.find({mycategory:query});
+    res.render("shop",{products,categories,login: req.session,count})
+      
+    
+
+  
+  
+  }catch(error){
+    console.log(error.message);
+  }
+
+}else{
   try {
     const products = await productModel.find();
     const categories = await categoryModel.find();
@@ -86,7 +116,13 @@ const shop = async (req, res) => {
   } catch (error) {
     console.log(error.message);
   }
-};
+
+}
+} catch(error){
+  console.log(error.message);
+}
+}
+  
 const loadLogin = async (req, res) => {
   try {
     res.render("login");
@@ -108,13 +144,15 @@ const doLogin = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log(isMatch);
+    // console.log(isMatch);
     if (!isMatch) {
       return res.redirect("/login");
     }
     req.session.userId = user._id;
     req.session.userLogin = true;
-    console.log(req.session);
+    req.session.username = user.name
+    
+    // console.log(req.session);
     res.redirect("/");
   } catch (error) {
     console.log(error.message);
@@ -124,7 +162,7 @@ const singleProdetails = async (req, res) => {
   try {
     const id = req.params.id;
     const product = await productModel.findOne({ _id: id });
-    res.render("singleprodetails", { product,login: req.session.userLogin,count });
+    res.render("singleprodetails", { product,login: req.session,count });
   } catch (error) {
     console.log(error.message);
   }
@@ -144,7 +182,7 @@ const loadCart = async (req, res, next) => {
       let items = Cart.cartItems;
 console.log(items);
 let subtotal = Cart.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
-      res.render("cart", { items, login: req.session.userLogin, count, subtotal});
+      res.render("cart", { items, login: req.session, count, subtotal});
     }
   } catch (error) {
     console.log(error);
@@ -453,7 +491,7 @@ const checkout = async (req, res) => {
 
 let subtotal = Cart.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
     
-    res.render("checkout",{ login: req.session.userLogin, count ,addressdata,subtotal});
+    res.render("checkout",{ login: req.session, count ,addressdata,subtotal});
  } } catch (error) {
     console.log(error.message);
   }
@@ -463,7 +501,7 @@ const account = async (req, res) => {
     userId= req.session.userId
 
      const userdata = await userModel.findOne({_id:userId})
-    //  console.log(userdata);
+     console.log(userdata);
      let addressdata = userdata.address
     //  console.log(addressdata,"address");
      const orderdata = await orderModel.find({userId:userId})
@@ -471,11 +509,12 @@ const account = async (req, res) => {
      let orderinfo = await orderModel.findOne({ userId: userId}).populate('products.productId')
     //  console.log(orderinfo,"orderinfo");
      let pro =orderinfo.products
+     
 
      
     //  console.log(addressdata);
 
-    res.render("account",{ login: req.session.userLogin, count ,addressdata, pro,orderdata});
+    res.render("account",{ login: req.session, count ,addressdata, pro,orderdata,userdata});
   } catch (error) {
     console.log(error.message);
   }
@@ -586,7 +625,7 @@ const placeOrder = async(req, res,next) => {
   try {
     console.log("''''''''")
     let order = req.body
-    console.log(order);
+    console.log(order,"oooooorder");
     userId= req.session.userId
     const addressId = req.body.addressid
     
@@ -594,19 +633,20 @@ const placeOrder = async(req, res,next) => {
 
     
     let addressDetails = await userModel.findOne({ _id: userId }, { address: { $elemMatch: { _id: addressId } } }).lean();
-    let addressonly = addressDetails.address
-   console.log(addressonly);
+     let addressonly = addressDetails.address
+    console.log(addressDetails,"addressdetails");
+    console.log(addressonly,"addressonly");
 
 
    let cartData = await cartModel.findOne({userId:userId})
 
-console.log(cartData);
+// console.log(cartData);
 let subtotal = cartData.cartItems.map(item => item.total).reduce((acc, val) => acc + val, 0);
 console.log(subtotal);
 
    if (req.session.coupon != null) {
     const couponData = req.session.coupon
-    console.log(couponData);
+    // console.log(couponData);
     usercoupon = await couponModel.findOne({ Code: couponData })
     console.log(usercoupon);
     couponss = {
@@ -617,7 +657,7 @@ console.log(subtotal);
     if (subtotal > usercoupon.Minbill) {
 
       let discount = Math.round(subtotal * (usercoupon.Discount / 100))
-  console.log(discount);
+  // console.log(discount);
       if (discount > usercoupon.Cap) {
         let maxDiscount = Math.round(usercoupon.Cap)
         // console.log(maxDiscount, "maxdis");
@@ -650,8 +690,8 @@ console.log(subtotal);
 
   }
   let prods =cartData.cartItems
-  console.log(prods,"prods");
-  let status = order.payment_option === 'COD' ? 'placed': 'pending'
+  // console.log(prods,"prods");
+  let status = order.payment_option === 'COD' ? 'pending': 'placed'
 
   
    const orderDetails = new orderModel({
@@ -675,17 +715,38 @@ console.log(subtotal);
      }],
 
   })
-  await orderDetails
+   await orderDetails
   .save()
   .then(() => {
     req.session.coupon=null
     console.log("jjjjjjjjjjjj");
     // res.json({ status: true });
   })
-  .catch((error) => {
-    // console.log(error);
-    next(error);
-  });
+  console.log(orderDetails,"orderdetails");
+  if (order.payment_option === 'COD'){
+   await orderModel.updateOne({_id:orderDetails._id},{$set: {"payment.pay_id": "COD_"+orderDetails._id}}) 
+   await cartModel.deleteOne({userId:order.userId})
+   res.json({ codSuccess: true })
+  }
+  else {
+ 
+    var options = {
+      amount: orderDetails.total*100,
+      currency: "USD",
+      receipt: "" + orderDetails._id
+    }
+    instance.orders.create(options, function (err, order) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(order, "orrd");
+        res.json(order)
+      }
+
+    })
+
+  }
+  
 
   }
  catch (error) {
@@ -693,8 +754,33 @@ console.log(subtotal);
 next(error);
 }
   }
+ const verifyPayment= async (req, res,next) => {
+  console.log("comingggggg");
+    try {
+      let id = req.session.userId
+    console.log(req.body, "bod");
+    const crypto = require('crypto')
+    let hmac = crypto.createHmac('sha256',process.env.RAZORPAY_SECRET)
+    hmac.update(req.body.payment.razorpay_order_id + '|' + req.body.payment.razorpay_payment_id)
+    hmac = hmac.digest('hex')
+    if (hmac == req.body.payment.razorpay_signature) {
+      await orderModel.updateOne({ _id: req.body.order.receipt }, { $set: { order_status: 'placed', "payment.pay_status": 'success',"payment.pay_id": req.body.payment.razorpay_payment_id } })
+      await cartModel.deleteOne({ userId: id })
+      console.log("successs");
+      res.json({ status: true })
+    } else {
+      console.log("failed");
+      await orders.updateOne({ _id: req.body.order.receipt }, { $set: { order_status: 'failed', "payment.pay_status": 'failed',"payment.pay_id":"failed" } })
+      res.json({ status: false,errMsg:'' })
+    }
+    } catch (error) {
+      console.log(error);
+      
+    }
+    
+  }
 
-    // cartItems: [{ productId, quantity: 1, total: product.price }],
+    
     
     
 
@@ -868,7 +954,7 @@ let pro =orderinfo.products
 
 
 
-  res.render('useorderdetails',{login: req.session.userLogin,count,pro, orderinfo,userData})
+  res.render('useorderdetails',{login: req.session,count,pro, orderinfo,userData});
 
 }catch (error) {
     console.log(error.message);
@@ -876,7 +962,46 @@ let pro =orderinfo.products
 
 }
 }
+const orderSuccess = async (req, res) => {
+  try {
+    res.render("ordersuccess",{login: req.session.userLogin,count});
+  } catch (error) {
+    next();
+  }
+};
+const logout = async (req,res)=>{
+  req.session.destroy((error)=>{
+    if (error){
+      console.log(error);
+    }
+    else{
+      res.redirect('/login')
+    }
+  }
+  )
 
+}
+const updateProfile = async(req,res)=>{
+  try{
+    console.log("done");
+    
+    const userId= req.session.userId
+
+  
+    namei=req.body.name,
+    emaili=req.body.email,
+    console.log(emaili);
+    
+  
+  
+  await userModel.updateMany({_id:userId},{$set:{name : namei, email:emaili}}).then(()=>{
+    res.redirect('/account')
+  })
+}catch(err){
+  console.log(err);
+}
+
+}
 
 
 
@@ -924,6 +1049,11 @@ module.exports = {
   placeOrder,
   applyCoupon,
   useorderDetails,
+  orderSuccess,
+  verifyPayment,
+  logout,
+  updateProfile,
+  
   
   
   

@@ -6,8 +6,8 @@ signupform.addEventListener("submit", validate);
 
 function validate(event) {
   event.preventDefault();
-  alert("enetr")
-  console.log(">>>>>>");
+  // alert("enetr")
+  // console.log(">>>>>>");
 
   // define the regular expression for an email address
 

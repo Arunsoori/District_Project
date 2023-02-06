@@ -18,6 +18,8 @@ const path = require("path");
 
 const uploadOptions = multer({ storage: file.storage });
 const adminController = require("../controllers/adminController");
+const Session = require('../middleware/auth')
+
 
 //get
 
@@ -33,7 +35,15 @@ admin_route.get("/addcoupon", adminController.loadAddcoupon);
 admin_route.get("/couponlist", adminController.loadCouponList);
 admin_route.get("/editcoupon/:id", adminController.editCoupon);
 admin_route.get("/orderlist", adminController.orderList);
-admin_route.get("/orderdetails", adminController.orderDetails);
+admin_route.get("/orderdetails/:id", adminController.orderDetails);
+admin_route.get("/cancelorder/:id", adminController.cancelOrder);
+admin_route.get("/invoice/:id", adminController.invoice);
+admin_route.get("/logout", adminController.logout);
+
+
+
+
+
 
 
 
@@ -62,6 +72,8 @@ admin_route.post("/updateProduct/:id",uploadOptions.array("image", 5), adminCont
 admin_route.post( "/addproducts", uploadOptions.array("image", 4), adminController.addProducts);
 admin_route.post("/addcoupon", adminController.addCoupon);
 admin_route.post("/updatecoupon/:id",adminController.updateCoupon);
+admin_route.post("/delivery/:id",adminController.delivery);
+
 
 
 

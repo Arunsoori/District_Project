@@ -61,27 +61,31 @@ const orderSchema = new mongoose.Schema({
       }]
       ,
       delivery_status: {
-        ordered:{
-          state:{type:Boolean, default:false},
-          date:{type:Date},
+        type:String,
+        default: 'pending'
+
       },
-        shipped: {
-          state: { type: Boolean, default: false },
-          date: { type: Date },
-        },
-        out_for_delivery: {
-          state: { type: Boolean, default: false },
-          date: { type: Date },
-        },
-        delivered: {
-          state: { type: Boolean, default: false },
-          date: { type: Date },
-        },
-        cancelled: {
-          state: { type: Boolean, default: false },
-          date: { type: Date },
-        }
-      },
+      //   ordered:{
+      //     state:{type:Boolean, default:false},
+      //     date:{type:Date},
+      // },
+      //   shipped: {
+      //     state: { type: Boolean, default: false },
+      //     date: { type: Date },
+      //   },
+      //   out_for_delivery: {
+      //     state: { type: Boolean, default: false },
+      //     date: { type: Date },
+      //   },
+      //   delivered: {
+      //     state: { type: Boolean, default: false },
+      //     date: { type: Date },
+      //   },
+      //   cancelled: {
+      //     state: { type: Boolean, default: false },
+      //     date: { type: Date },
+      //   }
+      // },
       
      
       ordered_date: {

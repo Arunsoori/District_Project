@@ -1,4 +1,5 @@
 <%- include('../users/layouts/user-header.ejs') %>
+
 <main class="main">
 
 <section class="mt-50 mb-50">
@@ -42,7 +43,7 @@
                                 <ul>
                     <% categories.forEach(function(category){ %>
 
-                                    <li><a class="active" href="sort/id"><%= category.name %></a></li>
+                                    <li><a class="active" href="/shop?category=<%= category._id %>"><%= category.name %></a></li>
                                     <!-- <li><a href="#">Price: Low to High</a></li>
                                     <li><a href="#">Price: High to Low</a></li>
                                     <li><a href="#">Release Date</a></li>

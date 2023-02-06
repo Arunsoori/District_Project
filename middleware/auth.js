@@ -1,14 +1,14 @@
-module.exports = {
-    userSession: (req, res, next) => {
-        if (req.session.userlogin) {
+
+    userSession= (req, res, next) => {
+        if (req.session.userLogin) {
             next()
         }
         else {
             res.redirect('/login')
         }
-    },
+    }
 
-    adminSession: (req, res, next) => {
+    adminSession= (req, res, next) => {
         if (req.session.adminLogin) {
             next()
         }
@@ -16,4 +16,9 @@ module.exports = {
             res.redirect('/admin')
         }
     }
-};
+
+    module.exports = {
+        userSession,
+        adminSession,
+
+    }

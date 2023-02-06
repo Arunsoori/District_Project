@@ -42,36 +42,42 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#ID</th>
+                            <th>order ID</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">Number of items </th>
+                            <th scope="col">Order date</th>
+                            <th scope="col">Order status</th>
+                            <th scope="col">Payment method</th>
+                            <th scope="col">Payment status</th>
+
                             <th scope="col" class="text-end"> Action </th>
                         </tr>
                     </thead>
                     <tbody>
+                        <% orderdata.forEach(function(order) { %>
+
                         <tr>
-                            <td>0901</td>
-                            <td><b>Marvin McKinney</b></td>
-                            <td><template class="__cf_email__" data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3">[email&#160;protected]</template></td>
-                            <td>$9.00</td>
-                            <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                            <td>03.12.2020</td>
+                            <td><%= order._id %></td>
+                            <td><b><%= order.userId.name%></b></td>
+                            <td><%= order.products.length %></td>
+                            <td><%= order.ordered_date %></td>
+                            <td><%= order.order_status %></td>
+                            <td><%= order.payment.pay_method  %> </td>
+                            <td><%= order.payment.pay_status  %> </td>
+
                             <td class="text-end">
-                                <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                <a href="" class="btn btn-md rounded font-sm">Detail</a>
                                 <div class="dropdown">
                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">View detail</a>
-                                        <a class="dropdown-item" href="#">Edit info</a>
-                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                        <a class="dropdown-item" href="/admin/orderdetails/<%= order._id %>">View detail</a>
+                                        <!-- <a class="dropdown-item" href="#">Edit info</a> -->
+                                        <a class="dropdown-item text-danger" href="/admin/cancelorder/<%= order._id %>">Cancel</a>
                                     </div>
                                 </div> <!-- dropdown //end -->
                             </td>
                         </tr>
-                        
+                     <% }) %> 
                     </tbody>
                 </table>
             </div> <!-- table-responsive //end -->

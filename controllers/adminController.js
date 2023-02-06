@@ -10,7 +10,9 @@ const couponModel = require("../models/couponModel");
 
 const productModel = require("../models/productModel");
 const fs = require("fs");
-const { findById } = require("../models/adminModel");
+const { findById, find } = require("../models/adminModel");
+const orderModel = require("../models/orderModel");
+const Chart = require('chart.js');
 
 
 
@@ -24,7 +26,48 @@ const loadLogin = async (req, res) => {
 };
 const loadDashboard = async (req, res) => {
   try {
-    res.render("dashboard");
+    let users = await userModel.find();
+    let orders = await orderModel.find()
+    let categories = await categoryModel.find()
+    let products = await productModel.find()
+    let salesData = await orderModel.find({order_status:'placed'})
+    console.log(salesData,"salesdata");
+
+
+    
+
+    
+    let salesChartDt = await orderModel.aggregate([
+      {
+        $match: { order_status: 'placed' }
+      },
+      {
+        $group: {
+          _id: { day: { $dayOfWeek: "$ordered_date" } },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+    console.log(salesChartDt);
+    let SalesCount = []
+    for(let i =1 ; i< 8 ;i++){
+      let found = false
+      for(let j=0;j< salesChartDt.length;j++){
+        if(salesChartDt[j]._id.day == i){
+          SalesCount.push({_id:{day:i},count:salesChartDt[j].count})
+          found = true
+          break;
+        }
+      }
+      if(!found){
+        SalesCount.push({_id:{day:i},count:0})
+      }
+    }
+    console.log(SalesCount,'salescount');
+    res.render("dashboard",{users,orders,categories,products,SalesCount,salesData});
   } catch (error) {
     console.log(error.message);
   }
@@ -58,7 +101,7 @@ const doLogin = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
-    console.log(isMatch);
+    // console.log(isMatch);
     if (!isMatch) {
       return res.redirect("/admin");
     }else{
@@ -66,7 +109,7 @@ const doLogin = async (req, res) => {
     req.session.adminId = admin._id
     req.session.adminLogin = true;
     
-    res.render("dashboard");
+    res.redirect("/admin/dashboard");
     }
   } catch (error) {
     console.log(error.message);
@@ -405,7 +448,7 @@ const updateCoupon= async(req, res) => {
    
 }
 await couponModel.updateOne({_id:id},{$set:updatedCoupon}).then(()=>{
-  res.redirect('/account')
+  res.redirect('/admin/couponlist')
 })
 }catch(err){
 console.log(err);
@@ -413,26 +456,84 @@ console.log(err);
   }
   const orderList = async (req,res)=>{
     try {
-      // const coupons = await couponModel.find(
-      // console.log(coupons);
+      // userId =req.session.userId
+      orderdata = await orderModel.find().populate('userId').sort({ ordered_date: -1 })
+      console.log(orderdata);
+
+    //  const orderdata = await orderModel.find({userId:userId})
+      
   
-      res.render("orderlist");
+      res.render("orderlist",orderdata);
     } catch (error) {
       console.log(error.message);
     }
   
   }
   const orderDetails = async (req,res)=>{
+    console.log("yes");
     try {
       // const coupons = await couponModel.find(
       // console.log(coupons);
-  
-      res.render("orderdetails");
+     let orderId = req.params.id
+
+      let orderinfo = await orderModel.findById({ _id:orderId}).populate('products.productId')
+      let pro =orderinfo.products
+      let userD= await orderModel.findById({ _id:orderId}).populate('userId')
+      let userData = userD.userId
+      
+
+
+      
+      res.render("orderdetails",{pro,userData,orderinfo});
     } catch (error) {
       console.log(error.message);
     }
   
   }
+  const cancelOrder = async (req,res)=>{
+    console.log("camcel orderb get");
+   let orderId= req.params.id
+    orderModel.updateOne({_id:orderId},{$set:{order_status:'cancelled', 'delivery_status.cancelled.state': true,'delivery_status.cancelled.date': Date.now()}}).then(()=>{
+    res.redirect('/admin/orderlist')
+   })
+  }
+  const delivery = async(req,res)=>{
+    console.log("innnnnnnnnnnnn");
+   let orderId= req.params.id
+   console.log(orderId);
+    let de= req.body.Delivery
+    console.log(de);
+ 
+ 
+   await orderModel.updateOne({_id:orderId},{$set:{delivery_status:req.body.Delivery}})
+    res.redirect('/admin/orderlist')
+    
+
+  }
+  const invoice= async(req,res,next)=>{
+    try {
+      let orderId = req.params.id
+    let orderInfo = await orderModel.findOne({ _id: orderId }).populate(['products.productId', 'userId'])
+    res.render('invoice', {  orderInfo })
+    } catch (error) {
+      next(createError(404));
+    }
+
+  }
+  const logout = async (req,res)=>{
+    req.session.destroy((error)=>{
+      if (error){
+        console.log(error);
+      }
+      else{
+        res.redirect('/admin')
+      }
+    }
+    )
+  
+  }
+
+  
 
 
 
@@ -474,6 +575,11 @@ module.exports = {
    updateCoupon,
    orderList,
    orderDetails,
+   cancelOrder,
+   delivery,
+   invoice,
+   logout,
+   
   
    
   

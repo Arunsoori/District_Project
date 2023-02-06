@@ -20,7 +20,7 @@ function addToCart(productId) {
     })
 }
 function addToWish(productId) {
-    alert("kkkkkkkkkkkkkkkk")
+    // alert("kkkkkkkkkkkkkkkk")
     $.ajax({
         url: '/addToWishlist/' + productId,
         method: 'get',
@@ -36,7 +36,7 @@ function addToWish(productId) {
     })
 }
 function delWishItem(itemId) {
-alert("enter")
+// alert("enter")
 	$.ajax({
 		url: '/removeWish/' + itemId,
 		method: 'get',
@@ -53,7 +53,7 @@ alert("enter")
 	})
 }
 function changeItemQty(itemId, prodId, count) {
-	alert("enter ajax")
+	// alert("enter ajax")
 	$.ajax({
 		url: 'changeItemQty',
 		data: {
@@ -93,7 +93,7 @@ function editaddress(id) {
 	  dataType: "json",
 	  encode: true,
 	}).done(function (data) {
-	  console.log(data);
+	//   console.log(data);
 	  $('#actionmodel').attr('action', '/updateaddress/' + data._id)
 	  $('#name').val(data.Name)
 	  $('#lastname').val(data.Lastname)
@@ -153,3 +153,119 @@ $.ajax({
 	}
 });
 })
+
+$("#checkout-form").submit((e) => {
+	e.preventDefault()
+	$.ajax({
+		url: '/placeorder',
+		method: 'post',
+		data: $('#checkout-form').serialize(),
+		success: (response) => {
+			// alert("jhgh")
+			if (response.codSuccess) {
+				swal(
+					'Success',
+					'Your order is placed',
+					'success'
+				).then(() => {
+					location.href = '/ordersuccess'
+				})
+			} else {
+				razorpayPayment(response)
+			}
+		}
+	})
+})
+function razorpayPayment(order) {
+	// alert("ethi")
+	var options = {
+		"key": 'rzp_test_G3OiY6KuQ4uDEi', // Enter the Key ID generated from the Dashboard
+		"amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+		"currency": "USD",
+		"name": "District 11",
+		"description": "Test Transaction",
+		"image": "https://example.com/your_logo",
+		"order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+		"handler": function (response) {
+			verifyPayment(response, order)
+		},
+		"prefill": {
+			"name": "name",
+			"email": "name@example.com",
+			"contact": "9000090000"
+		},
+		"notes": {
+			"address": "Razorpay Corporate Office"
+		},
+		"theme": {
+			"color": "#3399cc"
+		}
+	};
+	var rzp1 = new Razorpay(options);
+	rzp1.on('payment.failed', function (response) {
+                    
+	});
+	
+	rzp1.open();
+}
+// function razorpayPayment(order) {
+
+// 	var options = {
+// 		"key": "rzp_test_G3OiY6KuQ4uDEi", // Enter the Key ID generated from the Dashboard
+// 		"amount":order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+// 		"currency": "INR",
+// 		"name": "Shoe Rack",
+// 		"description": "Test Transaction",
+// 		"image": "http://localhost:3000/images/logo.png",
+// 		"order_id": order.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+// 		"handler": function (response) {
+// 			console.log(response)
+// 			verifyPayment(response,order);
+// 		},
+// 		"prefill": {
+// 			"name": "ajay",
+// 			"email":"ajay@gmail.com",
+// 			"contact":"8714441727"
+// 		},
+// 		"notes": {
+// 			"address": "Razorpay Corporate Office"
+// 		},
+// 		"theme": {
+
+// 			"color": "#193D56"   
+// 		}
+// 	};
+// 	var rzp1 = new Razorpay(options);
+// 	rzp1.open();
+// }
+function verifyPayment(payment, order) {
+	// alert("verify payment")
+	$.ajax({
+		url: '/verifypayment',
+		data: {
+			payment,
+			order
+		},
+		method: 'post',
+		success: (response) => {
+			if (response.status) {
+				swal(
+					'Success',
+					'Payment Sucess, your order is placed',
+					'success'
+				).then(() => {
+					location.href = '/ordersuccess'
+				})
+			} else {
+				swal(
+					'Failed',
+					'Payment failed!!!!',
+					'error'
+				).then(()=>{
+					location.href = '/cart'
+				})
+				
+			}
+		}
+	})
+}
