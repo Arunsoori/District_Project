@@ -7,6 +7,8 @@ const adminModel = require("../models/adminModel");
 const userModel = require("../models/userModel");
 const categoryModel = require("../models/categoryModel");
 const couponModel = require("../models/couponModel");
+const bannerModel = require("../models/bannerModel");
+
 
 const productModel = require("../models/productModel");
 const fs = require("fs");
@@ -520,7 +522,48 @@ console.log(err);
     }
 
   }
-  const logout = async (req,res)=>{
+  const loadAddBanner = async(req,res,next)=>{
+    try{
+      res.render('addbannerPage')
+
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+  const addBanner = async(req, res,next) => {
+    console.log("comon");
+    console.log(req.body.bannerName);
+    try {
+      const filenames = req.files
+    console.log(filenames);
+      const bannerr = new bannerModel({
+        name: req.body.name,
+        image: filenames,
+        description: req.body.description
+      })
+
+      bannerr.save((error, bannerr) => {
+        if (error) {
+          req.session.message = {
+            type: 'danger',
+            message: 'Error while adding banner'+error.message
+          }
+          res.redirect('/admin/addbannerPage')
+        } else {
+          req.session.message = {
+            type: 'success',
+            message: 'Banner added successfully'
+          }
+          res.redirect('/admin/addbannerPage')
+        }
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+ 
+  const logout = async(req,res)=>{
     req.session.destroy((error)=>{
       if (error){
         console.log(error);
@@ -579,6 +622,9 @@ module.exports = {
    delivery,
    invoice,
    logout,
+   addBanner,
+   loadAddBanner,
+
    
   
    

@@ -39,6 +39,12 @@ admin_route.get("/orderdetails/:id", adminController.orderDetails);
 admin_route.get("/cancelorder/:id", adminController.cancelOrder);
 admin_route.get("/invoice/:id", adminController.invoice);
 admin_route.get("/logout", adminController.logout);
+admin_route.post("/addbanner", adminController.addBanner);
+admin_route.get("/addbannerPage", adminController.loadAddBanner);
+
+
+
+
 
 
 
