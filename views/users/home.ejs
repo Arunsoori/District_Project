@@ -6,22 +6,25 @@
             <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
                 <div class="single-hero-slider single-animation-wrap">
                     <div class="container">
+        <% banners.forEach(function(banner){ %>
+                        
                         <div class="row align-items-center slider-animated-1">
                             <div class="col-lg-5 col-md-6">
                                 <div class="hero-slider-content-2">
-                                    <h4 class="animated">Trade-in offer</h4>
-                                    <h2 class="animated fw-900">Supper value deals</h2>
-                                    <h1  class="animated fw-900 hometitle">On all products</h1>
+                                    <h4 class="animated"><%= banner.name  %> </h4>
+                                    <h2 class="animated fw-900"><%= banner.description  %> </h2>
+                                    <h1  class="animated fw-900 hometitle"><%= banner.description  %></h1>
                                     <p class="animated">Save more with coupons & up to 70% off</p>
                                     <a class="animated btn btn-brush btn-brush-3" href="shop-product-right.html"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
                                 <div class="single-slider-img single-slider-img-1">
-                                    <img class="animated slider-1-1" src="/images/portrait-handsome-confident-stylish-hipster-lambersexual-model-sexy-man-dressed-size-tshirt-jeans-fashion-male-isolated-studio-posing-near-white-wall_158538-26382.jpg" alt="">
+                                    <img class="animated slider-1-1" src="/uploads/<%= banner.image[0]  %>">
                                 </div>
                             </div>
                         </div>
+                        <%  }) %> 
                     </div>
                 </div>
                 <!-- <div class="single-hero-slider single-animation-wrap">

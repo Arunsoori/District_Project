@@ -161,8 +161,9 @@ $("#checkout-form").submit((e) => {
 		method: 'post',
 		data: $('#checkout-form').serialize(),
 		success: (response) => {
-			// alert("jhgh")
+			
 			if (response.codSuccess) {
+				
 				swal(
 					'Success',
 					'Your order is placed',

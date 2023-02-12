@@ -87,7 +87,9 @@ const orderSchema = new mongoose.Schema({
       //   }
       // },
       
-     
+      // discount_amount: {
+      //   type: Number,
+      // },
       ordered_date: {
         type: Date,
         default: Date.now()

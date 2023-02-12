@@ -17,6 +17,7 @@ const path = require("path");
 
 
 const uploadOptions = multer({ storage: file.storage });
+
 const adminController = require("../controllers/adminController");
 const Session = require('../middleware/auth')
 
@@ -39,8 +40,18 @@ admin_route.get("/orderdetails/:id", adminController.orderDetails);
 admin_route.get("/cancelorder/:id", adminController.cancelOrder);
 admin_route.get("/invoice/:id", adminController.invoice);
 admin_route.get("/logout", adminController.logout);
-admin_route.post("/addbanner", adminController.addBanner);
+admin_route.post("/addbanner",uploadOptions.array("image", 1), adminController.addBanner);
 admin_route.get("/addbannerPage", adminController.loadAddBanner);
+admin_route.get("/bannerlist", adminController.loadbannerList);
+admin_route.get("/editbanner/:id", adminController.editBanner);
+admin_route.post("/salesdata", adminController.salesData);
+admin_route.get("/salesdataexcel", adminController.salesDataExcel);
+admin_route.get("/salesdataexcell", adminController.salesDataExcell);
+
+
+
+
+
 
 
 
@@ -79,6 +90,9 @@ admin_route.post( "/addproducts", uploadOptions.array("image", 4), adminControll
 admin_route.post("/addcoupon", adminController.addCoupon);
 admin_route.post("/updatecoupon/:id",adminController.updateCoupon);
 admin_route.post("/delivery/:id",adminController.delivery);
+admin_route.post("/updateBanner/:id",uploadOptions.array("image", 1),
+adminController.updateBanner);
+
 
 
 

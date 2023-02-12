@@ -1,0 +1,61 @@
+
+<%- include('../admin/layouts/admin-header.ejs') %>
+
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-6">
+            <div class="content-header">
+                <h2 class="content-title">Add New Banner</h2>
+                <div>
+                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                    <!-- <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="/admin/updateBanner/<%=bannerDetails._id%>"  method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h6>1. General info</h6>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="mb-4">
+                                <label class="form-label">Banner title</label>
+                                <input type="text" value="<%=bannerDetails.name%>" name="bannerName" placeholder="Type here" class="form-control">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here"  name="description"  class="form-control" rows="4"><%=bannerDetails.description%></textarea>
+                            </div>
+                            
+                        </div> <!-- col.// -->
+                    </div> <!-- row.// -->
+                   
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h6>4. Media</h6>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="mb-4">
+                                <span class="form-group">
+                                    <img src="/uploads/<%= bannerDetails.image[0]%>" alt="" style="width: 100px ; height: 100px ;">
+                                </span>
+                                <label class="form-label">Images</label>
+                                <input name="image" multiple class="form-control" id="input-5" type="file" value="/uploads/<%= bannerDetails.image[0]%>">
+                            </div>
+                        </div> <!-- col.// -->
+                    </div> <!-- .row end// -->
+                    <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+</section>
+<%- include('../admin/layouts/admin-footer.ejs') %>
