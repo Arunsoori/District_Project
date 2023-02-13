@@ -90,6 +90,10 @@
                     <div class="card bg-white col-12 col-md-5  mt-2" id="salesContainer" style="height: 300px; width: 100%;">
                         <canvas id="sales" style="height: 100%; width: 100%;"> </canvas>
                       </div>
+                      <div class="row  justify-content-around mt-4" id="graphs">
+                        <div class="card bg-white col-12 col-md-5 mt-2" id="payContainer">
+                          <canvas id="payment_method"></canvas>
+                        </div>
                     <!-- <div class="row">
                         <div class="col-lg-5">
                             <div class="card mb-4">
@@ -526,4 +530,49 @@
         data: SalesData,
         options: options
       });
-    </script> -->
+    </script> 
+    <script>
+        var ctx1 = $("#payment_method");
+        var payMethodData = {
+          labels: [
+            'Cash On Delivery',
+            'Online',
+          ],
+          datasets: [{
+            label: 'Payment Method',
+            data: [`<%=codNum %>`, `<%= onlineNum %>`],
+            backgroundColor: [
+              "#FAEBD7",
+              "#DCDCDC"
+            ],
+            borderColor: [
+              "#CDA776",
+              "#989898"
+            ],
+            borderWidth: [1, 1],
+            hoverOffset: 4
+          }]
+        };
+        var options = {
+          responsive: true,
+          title: {
+            display: true,
+            position: "top",
+            text: "Payment Method",
+            fontSize: 18,
+            fontColor: "#111"
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+            }
+          }
+        };
+        var payMethodGraph = new Chart(ctx1, {
+          type: "doughnut",
+          data: payMethodData,
+          options: options
+        });
+      </script>

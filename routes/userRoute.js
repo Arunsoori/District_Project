@@ -32,7 +32,6 @@ const Session = require('../middleware/auth')
 const userController = require("../controllers/userController")
 user_route.get('/',userController.countItem,userController.home)
 user_route.get('/login',userController.loadLogin)
-user_route.post('/login',userController.doLogin)
 user_route.get('/shop',Session.userSession,userController.countItem,userController.shop)
 user_route.get("/singleprodetails/:id",Session.userSession,userController.countItem,userController.singleProdetails);
 user_route.get('/register',userController.loadRegister)
@@ -64,6 +63,7 @@ user_route.get('/ordersuccess',userController.orderSuccess)
 
 
 
+user_route.post('/login',userController.doLogin)
 
 user_route.post('/changeItemQty/',userController.changeItemQty);
 

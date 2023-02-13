@@ -15,7 +15,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
                     <span>
-                        <i class="material-icons md-calendar_today"></i> <b>  <%= orderinfo.ordered_date %> </b>
+                        <i class="material-icons md-calendar_today"></i> <b> <%= orderinfo.ordered_date.getDate()+ '-'+ (orderinfo.ordered_date.getMonth()+1)+'-'+ orderinfo.ordered_date.getFullYear() %> </b>
                     </span> <br>
                     <small class="text-muted">Order ID:   <%= orderinfo._id %> </small>
                 </div>

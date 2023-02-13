@@ -134,7 +134,7 @@
                                     <% orderdata.forEach(function(order){ %>
 
                                                             <tr>
-                                                                <td><%= order.ordered_date  %></td>
+                                                                <td><%= order.ordered_date.getDate()+ '-'+ (order.ordered_date.getMonth()+1)+'-'+ order.ordered_date.getFullYear() %></td>
                                                                 <td><%= order.total %></td>
                                                                 <td><%= order.payment.pay_method %></td>
                                                                 <td><%= order.order_status   %></td>

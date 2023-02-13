@@ -28,14 +28,17 @@ const loadLogin = async (req, res,next) => {
   }
 };
 const loadDashboard = async (req, res) => {
+  console.log("DASH");
   try {
     let users = await userModel.find();
     let orders = await orderModel.find()
     let categories = await categoryModel.find()
     let products = await productModel.find()
     let salesData = await orderModel.find({order_status:'placed'})
+    let codNum = (await orderModel.find({ order_status: "placed", 'payment.pay_method': "COD" })).length
+    let onlineNum = (await orderModel.find({ order_status: "placed", 'payment.pay_method': "online payment" })).length
     
-
+console.log(codNum, onlineNum);
 
     
 
@@ -70,9 +73,9 @@ const loadDashboard = async (req, res) => {
       }
     }
     
-    res.render("dashboard",{users,orders,categories,products,SalesCount,salesData});
+    res.render("dashboard",{users,orders,categories,products,SalesCount,salesData,codNum,onlineNum});
   } catch (error) {
-  
+  next(error)
   }
 };
 const homePage = async (req, res,next) => {
@@ -94,6 +97,7 @@ const loadUserlist = async (req, res,next) => {
 
 const doLogin = async (req, res,next) => {
   console.log("!!!!!!!!");
+  console.log(req.body);
   try {
     const { email, password } = req.body;
     // console.log(req.body);
@@ -106,13 +110,16 @@ const doLogin = async (req, res,next) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     // console.log(isMatch);
     if (!isMatch) {
+      console.log("fLSE");
+
       return res.redirect("/admin");
     }else{
     
+      console.log("done");
     req.session.adminId = admin._id
     req.session.adminLogin = true;
     
-    res.redirect("/admin/dashboard");
+    res.redirect("/admin/dashboard")
     }
   } catch (error) {
     console.log(error.message);

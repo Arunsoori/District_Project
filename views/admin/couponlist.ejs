@@ -44,7 +44,7 @@
                                         <%=coupon.Cap%>
                                     </td>
                                     <td>
-                                        <%=coupon.Expire%>
+                                        <%= coupon.Expire.getDate()+ '-'+ (coupon.Expire.getMonth()+1)+'-'+ coupon.Expire.getFullYear() %>
                                     </td>
                                     <td>
                                         <%=coupon.Discount%> %
