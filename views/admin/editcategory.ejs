@@ -3,7 +3,7 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Categories </h2>
+                    <h2 class="content-title card-title">Edit Categories </h2>
                     <p>Add, edit or delete a category</p>
                 </div>
                 <div>
@@ -14,22 +14,22 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form id="category-form" action="/admin/addcategory" method="post">
+                            <form id="category-form" action="/admin/updatecategory/<%=category._id %>" method="post">
                                 <div class="mb-4">
                                     <label name="name"  for="product_name" class="form-label">Name</label>
-                                    <input id="categoryname" type="text" placeholder="Type here" name="name"  class="form-control" id="product_name" />
+                                    <input value="<%=category.name%>" id="categoryname" type="text" placeholder="Type here" name="name"  class="form-control" id="product_name" />
                       <p id="messagecn" style="color: red" ;> </p>
 
                                 </div>
                                 
                                 <div class="mb-4">
                                     <label   class="form-label">Description</label>
-                                    <textarea id="cdescription" placeholder="Type here" name="description" class="form-control"></textarea>
+                                    <textarea value="" id="cdescription" placeholder="Type here" name="description" class="form-control"><%=category.description %></textarea>
                       <p id="messagecd" style="color: red" ;> </p>
 
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">Create category</button>
+                                    <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </form>
                         </div>
@@ -86,38 +86,4 @@
                 </div> <!-- card body .// -->
             </div> <!-- card .// -->
         </section> <!-- content-main end// -->
-        <script>
-var categoryform = document.getElementById("category-form");
-categoryform.addEventListener("submit", validateCategory )
-
-function validateCategory(event) {
-    
-    event.preventDefault();
-  
-  
-  
-    
-    const categoryname= document.getElementById("categoryname").value
-    const cdescription = document.getElementById("cdescription").value
-    
-  
-   
-  
-    if(!categoryname){
-      document.getElementById("messagecn").innerHTML="categoryname is required"
-      return
-    }
-    if(!cdescription) {
-      
-      document.getElementById("messagecd").innerHTML="description required"
-      return
-    } 
-    
-     categoryform.submit()
-  
-  }
-  
-</script>
-
-<%- include('../admin/layouts/admin-footer.ejs') %>
-        
+        <%- include('../admin/layouts/admin-footer.ejs') %>

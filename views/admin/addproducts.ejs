@@ -15,14 +15,14 @@
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
-                        <div>
+                        <!-- <div>
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             <!-- <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button> -->
-                        </div>
+                        <!-- </div> --> 
                     </div>
                 </div>
             </div>
-            <form action="/admin/addproducts"  method="post" enctype="multipart/form-data">
+            <form id="product-form" action="/admin/addproducts"  method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card mb-4">
@@ -34,11 +34,15 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Product title</label>
-                                        <input type="text" name="productName" placeholder="Type here" class="form-control">
+                                        <input id="productname" type="text" name="productName" placeholder="Type here" class="form-control">
+                      <p id="messagep" style="color: red" ;> </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" name="description"  class="form-control" rows="4"></textarea>
+                                        <textarea id="description" placeholder="Type here" name="description"  class="form-control" rows="4"></textarea>
+                      <p id="messaged" style="color: red" ;> </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Brand name</label>
@@ -58,7 +62,9 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Cost in USD</label>
-                                        <input type="text" name="price" placeholder="$00.0" class="form-control">
+                                        <input id="cost" type="text" name="price" placeholder="$00.0" class="form-control">
+                      <p id="messagec" style="color: red" ;> </p>
+
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -93,7 +99,10 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Images</label>
-                                        <input name="image" multiple class="form-control" id="input-5" type="file">
+                                        <input id="imagep" name="image" multiple class="form-control"  type="file">
+                                        <!-- id="productimage" -->
+                      <p id="messagei" style="color: red" ;> </p>
+
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- .row end// -->
@@ -105,5 +114,35 @@
             </div>
         </form>
         </section> <!-- content-main end// -->
+  <script src="/javascripts/allformvalidation.js"></script>
+  <script>
+    const fileInput = document.getElementById("imagep");
+fileInput.addEventListener("change", validatePhoto);
+
+function validatePhoto() {
+    console.log(">>>>>");
+  const file = fileInput.files[0];
+  const fileType = file.type;
+  const fileSize = file.size;
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif","image/webp"]; // add more allowed types if necessary
+
+  if (!allowedTypes.includes(fileType)) {
+    swal("Invalid file type. Please select an image file.");
+    fileInput.value = "";
+    return false;
+  }
+
+  if (fileSize > 5000000) {
+    swal("File size is too large. Please select a file smaller than 5MB.");
+    fileInput.value = "";
+    return false;
+  }
+
+  return true;
+}
+
+</script>
+
         <%- include('../admin/layouts/admin-footer.ejs') %>
+
 

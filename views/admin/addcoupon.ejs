@@ -15,14 +15,14 @@
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Add New Coupon</h2>
-                        <div>
+                        <!-- <div>
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             <!-- <button  type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button> -->
-                        </div>
+                        <!-- </div> --> 
                     </div>
                 </div>
             </div>
-            <form action="/admin/addcoupon"  method="post" ">
+            <form id="coupon-form" action="/admin/addcoupon"  method="post" ">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card mb-4">
@@ -34,27 +34,40 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Coupon name</label>
-                                        <input type="text" name="name" placeholder="Type here" class="form-control">
+                                        <input id="cpname" type="text"  name="name" placeholder="Type here" class="form-control">
+                                        <p id="messagecpn" style="color: red" ;> </p>
+
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Coupon code</label>
-                                        <input type="number" name="code" placeholder="Type here" class="form-control">
+                                        <input id="code" type="number" name="code" placeholder="Type here" class="form-control">
+                      <p id="messagecpc" style="color: red" ;> </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Minum bill amount</label>
-                                        <input type="number" name="bill" placeholder="Type here" class="form-control">
+                                        <input id="min" type="number" name="bill" placeholder="Type here" class="form-control">
+                      <p id="messagecpm" style="color: red" > </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Cap amount</label>
-                                        <input type="number" name="cap" placeholder="Type here" class="form-control">
+                                        <input id="cap" type="number" name="cap" placeholder="Type here" class="form-control">
+                      <p id="messagecpc" style="color: red" > </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Discount(%)</label>
-                                        <input type="number" name="discount" placeholder="Type here" class="form-control">
+                                        <input id="discount" type="number" name="discount" placeholder="Type here" class="form-control">
+                      <p id="messagecpdi" style="color: red" > </p>
+
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Expiry date</label>
-                                        <input type="date" name="date" placeholder="Type here" class="form-control">
+                                        <input id="expire" type="date" name="date" placeholder="Type here" class="form-control">
+                      <p id="messagecpe" style="color: red" > </p>
+
                                     </div>
                                     
                             
@@ -67,5 +80,66 @@
             </div>
         </form>
         </section> <!-- content-main end// -->
+        <script>
+        var couponform = document.getElementById("coupon-form");
+couponform.addEventListener("submit", validateCoupon )
+
+function validateCoupon(event) {
+    
+    event.preventDefault();
+  
+  
+  
+    
+    const couponname= document.getElementById("cpname").value
+    const code = document.getElementById("code").value
+    const min = document.getElementById("min").value
+    const cap = document.getElementById("cap").value
+    const  discount= document.getElementById("discount").value
+    const exp = document.getElementById("expire").value
+
+console.log(discount);
+console.log(exp);
+
+
+    
+  
+   
+  
+    if(!couponname){
+      document.getElementById("messagecpn").innerHTML="couponname is required"
+      return
+    }
+    if(!code) {
+      
+      document.getElementById("messagecpc").innerHTML="code  required"
+      return
+    } 
+    if(!min) {
+      
+      document.getElementById("messagecpm").innerHTML="minimum amount required"
+      return
+    } 
+    if(!cap) {
+      
+      document.getElementById("messagecpc").innerHTML=" cap amount required"
+      return
+    } 
+    if(!discount) {
+      
+      document.getElementById("messagecpdi").innerHTML="discount required"
+      return
+    } 
+    if(!exp) {
+      
+      document.getElementById("messagecpe").innerHTML="expire date required"
+      return
+    } 
+    
+     couponform.submit()
+  
+  }
+  
+</script>
         <%- include('../admin/layouts/admin-footer.ejs') %>
 

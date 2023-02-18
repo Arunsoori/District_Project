@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <form action="/admin/addbanner"  method="post" enctype="multipart/form-data">
+    <form  id="banner-form" action="/admin/addbanner"  method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-lg-6">
             <div class="card mb-4">
@@ -26,11 +26,15 @@
                         <div class="col-md-9">
                             <div class="mb-4">
                                 <label class="form-label">Banner title</label>
-                                <input type="text" name="bannerName" placeholder="Type here" class="form-control">
+                                <input id="bname"  type="text" name="bannerName" placeholder="Type here" class="form-control">
+                      <p id="messagebn" style="color: red" ;> </p>
+                          
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
-                                <textarea placeholder="Type here" name="description"  class="form-control" rows="4"></textarea>
+                                <textarea  id="bdescription" placeholder="Type here" name="description"  class="form-control" rows="4"></textarea>
+                      <p id="messagebd" style="color: red" ;> </p>
+
                             </div>
                             
                         </div> <!-- col.// -->
@@ -43,7 +47,9 @@
                         <div class="col-md-9">
                             <div class="mb-4">
                                 <label class="form-label">Images</label>
-                                <input name="image" multiple class="form-control" id="input-5" type="file">
+                                <input id="bimage" name="image" multiple class="form-control" id="input-5" type="file">
+                      <p id="messagebi" style="color: red" ;> </p>
+
                             </div>
                         </div> <!-- col.// -->
                     </div> <!-- .row end// -->
@@ -55,4 +61,47 @@
     </div>
 </form>
 </section>
+<script>
+    var bannerform = document.getElementById("banner-form");
+bannerform.addEventListener("submit", validateBanner)
+
+function validateBanner(event) {
+
+event.preventDefault();
+
+
+
+
+const bannername= document.getElementById("bname").value
+const bdescription = document.getElementById("bdescription").value
+const bimage = document.getElementById("bimage").value
+
+
+
+
+
+
+
+if(!bannername){
+  document.getElementById("messagebn").innerHTML="bannername is required"
+  return
+}
+if(!bdescription) {
+  
+  document.getElementById("messagebd").innerHTML="description  required"
+  return
+} 
+if(!bimage) {
+  
+  document.getElementById("messagebi").innerHTML="image required"
+  return
+} 
+
+
+
+ bannerform.submit()
+
+}
+
+</script>
 <%- include('../admin/layouts/admin-footer.ejs') %>

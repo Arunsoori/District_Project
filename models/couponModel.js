@@ -5,13 +5,13 @@ const couponSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        index: true
+        // index: true
       },
       Code: {
         type: Number,
         required: true,
-        unique: true,
-        index: true
+        // unique: true,
+        // index: true
       },
       Minbill: {
         type: Number

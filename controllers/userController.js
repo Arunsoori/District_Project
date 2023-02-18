@@ -16,7 +16,7 @@ const Razorpay = require("razorpay");
 const sendOtp = require("../utils/nodemailer");
 const { render } = require("../routes/userRoute");
 const wishlistModel = require("../models/wishlistModel");
-const { findById } = require("../models/userModel");
+const { findById, findOneAndUpdate, updateOne } = require("../models/userModel");
 const { userSession } = require("../middleware/auth");
 const { userInfo } = require("os");
 const bannerModel = require("../models/bannerModel");
@@ -77,7 +77,7 @@ const insertUser = async (req, res, next) => {
 const home = async (req, res, next) => {
   console.log("home");
   try {
-    const products = await productModel.find();
+    const products = await productModel.find({status:true});
     const banners = await bannerModel.find();
     console.log(banners);
 
@@ -106,7 +106,7 @@ const shop = async (req, res, next) => {
         res.render("shop", {
           products,
           categories,
-          login: req.session.userLogin,
+          login: req.session,
           count,
         });
       } catch (error) {
@@ -216,7 +216,10 @@ const addToCart = async (req, res, next) => {
               "cartItems.$.total": product.price,
             },
           }
-        );
+        ).then(() => {
+          console.log("mmm");
+          res.json({ status: false });
+        });
 
         // await cartModel.findOneAndUpdate(
         //    { productId },
@@ -323,7 +326,7 @@ const addToWishlist = async (req, res, next) => {
       const productExist = await wishlistModel.findOne({
         $and: [{ userId }, { productId: { $all: [productid] } }],
       });
-      console.log(productExist);
+      // console.log(productExist);
 
       if (!productExist) {
         await wishlistModel
@@ -331,6 +334,8 @@ const addToWishlist = async (req, res, next) => {
           .then(() => {
             res.json({ status: true });
           });
+      }else{
+        res.json({status:false})
       }
     } else {
       const wishlistData = new wishlistModel({
@@ -521,7 +526,8 @@ const account = async (req, res) => {
       .populate("products.productId");
     //  console.log(orderinfo,"orderinfo");
     let pro = orderinfo.products;
-
+    let coupon = await couponModel.findOne()
+    console.log(coupon,"coupon");
     //  console.log(addressdata);
 
     res.render("account", {
@@ -531,6 +537,7 @@ const account = async (req, res) => {
       pro,
       orderdata,
       userdata,
+      coupon,
     });
   } catch (error) {
     next(error);
@@ -880,7 +887,7 @@ const applyCoupon = async (req, res, next) => {
   } catch (err) {
     req.session.coupon = null;
     res.json({ success: false });
-    console.log(err);
+    next(error);
   }
 };
 const forgotPassword = async (req, res) => {
@@ -1005,7 +1012,7 @@ const useorderDetails = async (req, res) => {
 };
 const orderSuccess = async (req, res) => {
   try {
-    res.render("ordersuccess", { login: req.session.userLogin, count });
+    res.render("ordersuccess", { login: req.session, count });
   } catch (error) {
     next();
   }
@@ -1036,6 +1043,21 @@ const updateProfile = async (req, res) => {
     console.log(err);
   }
 };
+const cancelOrder = async(req,res,next)=>{
+  console.log(">>>>>>");
+try{
+  orderId = req.params.id
+  console.log(orderId);
+  orderModel.updateMany({_id:orderId},{$set:{order_status:'cancelled', delivery_status:"cancelled"}}).then(()=>{
+    res.redirect('/account')
+
+})
+}catch (error){
+  next(error)
+  
+
+}
+}
 
 module.exports = {
   loadRegister,
@@ -1075,4 +1097,5 @@ module.exports = {
   verifyPayment,
   logout,
   updateProfile,
+  cancelOrder,
 };

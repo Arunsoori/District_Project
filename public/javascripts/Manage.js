@@ -7,6 +7,11 @@ function addToCart(productId) {
         method: 'get',
         success: (response) => {
             if (response.status) {
+				swal(
+					'Success',
+					'Item ! added to cart ',
+					'success'
+				)
                 
                 let count =$('#cartCount').html()
             //   let count= document.getElementById(cartCount).innerHTML
@@ -15,7 +20,13 @@ function addToCart(productId) {
                 // document.getElementById(cartCount).innerHTML=count
                 // addToCartBtn.style.display = 'none';
                 // goToCartBtn.style.display = 'flex';
-            }
+            }else{
+				swal(
+					
+					'product already in cart! ',
+					
+				)
+			}
         }
     })
 }
@@ -25,12 +36,22 @@ function addToWish(productId) {
         url: '/addToWishlist/' + productId,
         method: 'get',
         success: (response) => {
+			
             if (response.status) {
+				swal(
+					'success',
+					'product added to wishlist',
+					'success'
+				)
                 let count = $('#wishCount').html()
                 count = parseInt(count)+1
                 $('#wishCount').html(count)
             } else {
-                alert("already exists")
+				swal(
+					'',
+					'product allready in wishlist',
+					'warning'
+				)
             }
         }
     })
@@ -64,7 +85,6 @@ function changeItemQty(itemId, prodId, count) {
 		},
 		method: 'post',
 		success: (response) => {
-			alert("responce")
 			if (response.status) {
 				let itemCount = $('#itemCount'+itemId).html()
 				itemCount = parseInt(itemCount) + parseInt(count)
@@ -140,15 +160,32 @@ $.ajax({
 
 
 			// $("#discount").text(discount);
-			alert("Coupon applied! New total: " + newTotal);
+			// alert("Coupon applied! New total: " + newTotal);
+			swal(
+				'Success',
+				'coupon applied! New total: " + newTotal ',
+				'success'
+			)
 			// $("#myDiv").show();
 		} else if (response.notapplicable) {
-			alert("Can't apply the coupon");
+			swal(
+				'',
+				'You cant apply this coupon',
+				'warning'
+			)
 		} else if (response.expired) {
-			alert("Coupon expired");
+			swal(
+				'',
+				'coupon expired',
+				'warning'
+			)
 		}
 		else {
-			alert("Invalid coupon code or you have already applied this coupon");
+			swal(
+				'',
+				'Your coupon is invalid or already applied',
+				'warning'
+			)
 		}
 	}
 });
@@ -178,7 +215,7 @@ $("#checkout-form").submit((e) => {
 	})
 })
 function razorpayPayment(order) {
-	// alert("ethi")
+	
 	var options = {
 		"key": 'rzp_test_G3OiY6KuQ4uDEi', // Enter the Key ID generated from the Dashboard
 		"amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -240,7 +277,7 @@ function razorpayPayment(order) {
 // 	rzp1.open();
 // }
 function verifyPayment(payment, order) {
-	// alert("verify payment")
+	
 	$.ajax({
 		url: '/verifypayment',
 		data: {

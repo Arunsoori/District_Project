@@ -43,19 +43,23 @@ user_route.get('/logout',userController.logout);
 // user_route.post('/register',userController.insertUser,userController.getOtp)
 user_route.get('/resendotp',userController.getOtp);
 user_route.get('/addtocart/:id',Session.userSession,userController.countItem,userController.addToCart);
-user_route.get('/wishlist',userController.countItem,userController.loadWishlist)
+user_route.get('/wishlist',Session.userSession,userController.countItem,userController.loadWishlist)
 
-user_route.get('/addToWishlist/:id',userController.addToWishlist);
+user_route.get('/addToWishlist/:id',Session.userSession,userController.addToWishlist);
 
-user_route.get('/cart',userController.countItem,userController.loadCart);
+user_route.get('/cart',Session.userSession,userController.countItem,userController.loadCart);
 user_route.get('/removeCart/:id',userController.removeCart);
 user_route.get('/removeWish/:id',userController.countItem,userController.removeWish);
-user_route.get('/checkout',userController.checkout);
+user_route.get('/checkout',Session.userSession,userController.checkout);
 user_route.get('/account',Session.userSession,userController.countItem,userController.account);
+user_route.get('/editaddress/:id',Session.userSession,userController.editAddressPage)
+
 user_route.get('/forgotpassword',userController.forgotpasswordPage);
 user_route.get('/resetpassword',userController.resetPasswordPage)
 user_route.get('/useorderdetails/:id',Session.userSession,userController.countItem,userController.useorderDetails)
-user_route.get('/ordersuccess',userController.orderSuccess)
+user_route.get('/ordersuccess',Session.userSession,userController.countItem,userController.orderSuccess)
+user_route.get("/cancelorder/:id",Session.userSession,userController.cancelOrder)
+
 
 
 
@@ -78,7 +82,6 @@ user_route.post('/verify',userController.verifyUser);
 user_route.post('/register',userController.insertUser,userController.getOtp)
 user_route.post('/address',userController.addAddress)
 
-user_route.get('/editaddress/:id',userController.editAddressPage)
 
 user_route.post('/updateaddress/:id',userController.updateAddress)
 

@@ -8,12 +8,12 @@ const userModel = require("../models/userModel");
 const categoryModel = require("../models/categoryModel");
 const couponModel = require("../models/couponModel");
 const bannerModel = require("../models/bannerModel");
-const excelJS = require("exceljs");
+const ExcelJS = require("exceljs");
 const writeXlsxFile = require('write-excel-file/node')
 
 const productModel = require("../models/productModel");
 const fs = require("fs");
-const { findById, find } = require("../models/adminModel");
+const { findById, find, findOneAndUpdate } = require("../models/adminModel");
 const orderModel = require("../models/orderModel");
 const Chart = require('chart.js');
 let orderdata ={}
@@ -122,7 +122,7 @@ const doLogin = async (req, res,next) => {
     res.redirect("/admin/dashboard")
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 // Block and Unblock Users
@@ -185,6 +185,70 @@ const insertCategory = async (req, res,next) => {
     console.log(error.message);
   }
 };
+const loadeditCategory = async (req,res,next)=>{
+  console.log("innnnnnn");
+  try{
+    categoryId= req.params.id
+    console.log(categoryId);
+   category= await categoryModel.findById({_id:categoryId})
+   const categories = await categoryModel.find();
+  res.render("editcategory",{category,categories, index:1})
+  }catch(error){
+    console.log(error);
+    next(error)
+
+  }
+
+
+
+
+
+
+
+}
+
+
+const  updateCategory = async(req,res,next)=>{
+  try{
+ Id = req.params.id
+ let dataToUpload ={
+  name : req.body.name,
+  description:req.body.description
+ }
+ await categoryModel.findByIdAndUpdate(Id, dataToUpload, () => {
+   
+    
+    res.redirect('/admin/addcategory')
+  
+
+ })
+
+
+
+
+
+  }catch(error){
+    next(error)
+
+  }
+}
+const  deleteCategory = async(req,res,next)=>{
+  console.log("kk");
+try{
+  Id =req.params.id
+  console.log(Id);
+  await categoryModel.deleteOne({_id:Id})
+res.redirect('/admin/addcategory')
+}catch(error){
+  
+  next(error)
+  console.log(error);
+}
+
+
+
+}
+
 const loadAddproducts =async(req,res,next)=>{
   if (req.session.adminLogin){
     try{
@@ -410,6 +474,8 @@ console.log("ethi");
   
 }
 const addCoupon = async(req, res,next) => {
+  console.log("nnnnnnnnn");
+  console.log(req.body);
   
   try{
   
@@ -431,6 +497,7 @@ const addCoupon = async(req, res,next) => {
   // });  
 })
 } catch (error) {
+  console.log(error);
 next(error);
 }
 };
@@ -465,6 +532,17 @@ await couponModel.updateOne({_id:id},{$set:updatedCoupon}).then(()=>{
 console.log(err);
 }
   }
+
+ const deleteCoupon =async (req,res,next)=>{
+  try{
+  Id =req.params.id
+  await couponModel.deleteOne({_id:Id})
+  res.redirect('/admin/couponlist')
+}catch(error){
+  next(error)
+}
+ }
+  
   const orderList = async (req,res,next)=>{
     try {
       // userId =req.session.userId
@@ -474,9 +552,10 @@ console.log(err);
     //  const orderdata = await orderModel.find({userId:userId})
       
   
-      res.render("orderlist",orderdata);
+      res.render("orderlist",{orderdata});
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
+      next(error);
     }
   
   }
@@ -671,130 +750,111 @@ console.log(err);
           next(error)
         }
        }
-       const salesDataExcel = (req,res,next)=>{
-        console.log("excellin");
-        // console.log(req.body);
-        try{
-        console.log(orderdata,"excellorderdata");
-        const workbook = new excelJS.Workbook();
-        const worksheet = workbook.addWorksheet("Sales Roport");
-        worksheet.columns = [
-          { header: "s no.", key: "s_no" },
-          { header: "Date", key: "data" },
-          { header: "User", key: "user" },
-          { header: "Payment", key: "payment" },
-          { header: "Status", key: "status" },
-          { header: "Items", key: "item" },
-          { header: "total", key: "total" },
-        ];
-        let counter = 1;
+      //  const salesDataExcel = (req,res,next)=>{
+      //   console.log("excellin");
+      //   // console.log(req.body);
+      //   try{
+      //   console.log(orderdata,"excellorderdata");
+      //   const workbook = new excelJS.Workbook();
+      //   const worksheet = workbook.addWorksheet("Sales Roport");
+      //   worksheet.columns = [
+      //     { header: "s no.", key: "s_no" },
+      //     { header: "Date", key: "data" },
+      //     { header: "User", key: "user" },
+      //     { header: "Payment", key: "payment" },
+      //     { header: "Status", key: "status" },
+      //     { header: "Items", key: "item" },
+      //     { header: "total", key: "total" },
+      //   ];
+      //   let counter = 1;
 
-        orderdata.forEach((sale) => {
-          const date = sale.date;
-          const isoString = date.toISOString();
-          const newDate = isoString.split("T")[0];
-          sale.data = newDate;
-          sale.s_no = counter;
-          sale.user = sale.user[0].name;
-          sale.payment = sale.payment.pay_method;
-          sale.total = sale.total;
-          sale.item = sale.product.length;
-          worksheet.addRow(sale);
-          counter++;
-        });
+      //   orderdata.forEach((sale) => {
+      //     const date = sale.date;
+      //     const isoString = date.toISOString();
+      //     const newDate = isoString.split("T")[0];
+      //     sale.data = newDate;
+      //     sale.s_no = counter;
+      //     sale.user = sale.user[0].name;
+      //     sale.payment = sale.payment.pay_method;
+      //     sale.total = sale.total;
+      //     sale.item = sale.product.length;
+      //     worksheet.addRow(sale);
+      //     counter++;
+      //   });
 
-        worksheet.getRow(1).eachCell((cell) => {
-          cell.font = { bold: true };
-        });
+      //   worksheet.getRow(1).eachCell((cell) => {
+      //     cell.font = { bold: true };
+      //   });
 
-        res.setHeader(
-          "Content-Type",
-          "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
-        );
+      //   res.setHeader(
+      //     "Content-Type",
+      //     "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+      //   );
 
-        // res.setHeader(
-        //   "Content-Disposition",
-        //   `attachment; filename=sales_Report_from_${req.body.from}_to_${req.body.toDate}.xlsx`
-        // );
+      //   // res.setHeader(
+      //   //   "Content-Disposition",
+      //   //   `attachment; filename=sales_Report_from_${req.body.from}_to_${req.body.toDate}.xlsx`
+      //   // );
 
-        return workbook.xlsx.write(res).then(() => {
-          res.status(200);
-        });
+      //   return workbook.xlsx.write(res).then(() => {
+      //     res.status(200);
+      //   });
        
         
-        } catch (error) {
-          next(error)
-        }
-      }
-      const salesDataExcell = async (req,res)=>{
-        const HEADER_ROW = [
-          {
-            value: 'Name',
-            fontWeight: 'bold'
-          },
-          
-        ]
-        
-        const DATA_ROW_1 = [
-          // "Name"
-          {
-            type: String,
-            value: 'John Smith'
-          },
-        
-          
-        ]
-        const DATA_ROW_2 = [
-          // "Name"
-          {
-            type: String,
-            value: 'John soori'
-          },
-        
-          
-        ]
-        
-        const data = [
-          HEADER_ROW,
-          DATA_ROW_1,
-          DATA_ROW_2,
-          
-        ]
-        const objects = [
-          {
-            name: 'John Smith',
-           
-          },
-          {
-            name: 'Alice Brown',
-           
-          }
-        ]
-        const schema = [
-          {
-            column: 'Name',
-            type: String,
-            value: student => student.name
-          },
-          
-        ]
-        try{
-        // await writeXlsxFile(objects, { schema,
-          
-        //   filePath: 'file.xlsx'
-        // })
-        // const buffer = await writeXlsxFile(data, { buffer: true })
-        const output = fs.createWriteStream("filetype.xlsx")
-const stream = await writeXlsxFile(data)
-stream.pipe(output)
-
-        res.send("success")
-      } catch(error){
-        console.log(error);
-        res.send("error")
-      }
-      }
-       
+      //   } catch (error) {
+      //     next(error)
+      //   }
+      // }
+//       
+const salesDataExcel = async (req,res, next)=>
+{
+  try{
+    console.log(orderdata,"excellorderdata");
+    
+    // Create a new workbook using exceljs
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+ // Define the headers of your Excel file
+ worksheet.columns = [
+  // { header: 'Column 1', key: 'column1' },
+  // { header: 'Column 2', key: 'column2' },
+  // { header: 'Column 3', key: 'column3' },
+  // { header: "s no.", key: "s_no" },
+      { header: "Date", key: "data" },
+      { header: "User", key: "user" },
+      { header: "Payment", key: "payment" },
+      // { header: "Status", key: "status" },
+      { header: "Items", key: "item" },
+      { header: "total", key: "total" },
+  // { header: "total", key: "total" }
+  
+]
+ // Add the data to the worksheet
+ orderdata.forEach((sale) => {
+      const date = sale.ordered_date;
+      const isoString = date.toISOString();
+      const newDate = isoString.split("T")[0];
+      sale.data = newDate;
+  //     sale.s_no = counter;
+      sale.user = sale.user[0].name;
+      sale.payment = sale.payment.pay_method;
+      sale.total = sale.total;
+      sale.item = sale.products.length;
+      worksheet.addRow(sale);
+  //     counter++;
+    });
+//  worksheet.addRows(data);
+ // Set the response headers for downloading the file
+ res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+ res.setHeader('Content-Disposition', 'attachment; filename=' + 'data.xlsx');
+// Stream the workbook to the response
+await workbook.xlsx.write(res);
+res.end();
+ } catch (error){
+  next(error)
+console.log(error);
+  }
+}
       
 
   
@@ -824,6 +884,9 @@ module.exports = {
   unblockUser,
   loadAddcategory,
   insertCategory,
+  loadeditCategory,
+  updateCategory,
+  deleteCategory,
   loadAddproducts,
   addProducts,
   homePage,
@@ -836,6 +899,7 @@ module.exports = {
    loadCouponList,
    addCoupon,
    editCoupon,
+   deleteCoupon,
    updateCoupon,
    orderList,
    orderDetails,
@@ -850,7 +914,7 @@ module.exports = {
    updateBanner,
    salesData,
    salesDataExcel,
-   salesDataExcell,
+  //  salesDataExcell,
 }
    
 

@@ -78,9 +78,9 @@
                 <div class="row">
                     
                     <div class="col-lg-6 mb-sm-15">
-                        <div class="toggle_info">
+                        <!-- <div class="toggle_info">
                             <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
-                        </div>
+                        </div> -->
                         <div class="panel-collapse collapse login_form" id="loginform">
                             <div class="panel-body">
                                 <p class="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
@@ -169,7 +169,7 @@
                                             <input class="form-check-input" style="color:#046963 ;" type="radio" value="<%=address._id%>" name="addressid" id="flexRadioDefault2" checked>
                                            <a href="">
                                             <label class="form-check-label" for="flexRadioDefault2">
-                                              Default checked radio
+                                              
                                             </label>
                                         </a>
                                             
@@ -230,7 +230,7 @@
                                             <td>$35.00</td>
                                         </tr> -->
                                         <tr>
-                                            <th>SubTotal</th>
+                                            <th>Total</th>
                                             <td class="product-subtotal" colspan="2"><%= subtotal %></td>
                                         </tr>
                                         <tr>
@@ -238,7 +238,7 @@
                                             <td colspan="2"><em>Free Shipping</em></td>
                                         </tr>
                                         <tr>
-                                            <th>Total</th>
+                                            <th>SubTotal</th>
                                             <td colspan="2" class="product-subtotal" ><span id="total"   class="font-xl text-brand fw-900"></span><%= subtotal %></td>
                                         </tr>
                                     </tbody>

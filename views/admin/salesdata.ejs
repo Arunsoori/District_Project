@@ -12,7 +12,7 @@
         </div>
         <div class="mx-4">
  
-          <button onclick="downloadexcel()"  >click</button>  <a  href="/admin/salesdataexcel"  class="btn btn-light text-capitalize border-0" data-mdb-ripple-color="dark"><i
+            <a  href="/admin/salesdataexcel"  class="btn btn-light text-capitalize border-0" data-mdb-ripple-color="dark"><i
                 class="fas fa-print text-primary"></i> Print Excel</a>
             </div>
         <div  id="printSalesdata" >
@@ -21,9 +21,9 @@
             <h2 class="content-title card-title">Sales report </h2>
             <p>Lorem ipsum dolor sit amet.</p>
         </div>
-        <div>
+        <!-- <div>
             <input type="text" placeholder="Search order ID" class="form-control bg-white">
-        </div>
+        </div> -->
     </div>
     <div class="card mb-4">
         <header class="card-header">
@@ -71,7 +71,7 @@
                             <td><%= order._id %></td>
                             <td><b><%= order.user[0].name%></b></td>
                             <td><%=order.products.length%></td>
-                            <td><%= new Date(order.ordered_date) %></td>
+                            <td><%= order.ordered_date.getDate()+ '-'+ (order.ordered_date.getMonth()+1)+'-'+ order.ordered_date.getFullYear() %></td>
                             <td><%= order.total %></td>
                             
                    
@@ -86,7 +86,7 @@
                                         <!-- <a class="dropdown-item text-danger" href="/admin/cancelorder/<%= order._id %>">Cancel</a>
                                     </div>
                                 </div> dropdown //end
-                            </td> --> -->
+                            </td> --> 
                         </tr>
                      <% }) %> 
                     </tbody>
@@ -118,9 +118,9 @@
         document.body.innerHTML = originalContents;
     }
     </script>
-    <script src="https://unpkg.com/write-excel-file@1.x/bundle/write-excel-file.min.js"></script>
+    <!-- <script src="https://unpkg.com/write-excel-file@1.x/bundle/write-excel-file.min.js"></script> -->
 
-    <script>
+    <!-- <script>
          const objects =[
           {
             name: 'John Smith',
@@ -142,6 +142,6 @@
         function downloadexcel(){
       writeXlsxFile(objects, schema, {
         fileName: 'file.xlsx'
-      })}
-    </script>
+      })} -->
+    <!-- </script> -->
 

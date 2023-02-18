@@ -1,5 +1,5 @@
 
-
+const createError=require('http-errors')
 const express=require("express");
 const path=require('path')
 const app= express();
@@ -43,6 +43,9 @@ app.use('/admin', admin_route)
 
 app.use('/',user_route)
 // error handler
+app.use (function(req,res,next){
+    next(createError(404))
+})
 app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;

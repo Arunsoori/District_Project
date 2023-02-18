@@ -25,28 +25,36 @@ const Session = require('../middleware/auth')
 //get
 
 admin_route.get("/", adminController.loadLogin);
-admin_route.get("/dashboard", adminController.loadDashboard);
-admin_route.get("/userlist", adminController.loadUserlist);
-admin_route.get("/addcategory", adminController.loadAddcategory);
-admin_route.get("/addproducts", adminController.loadAddproducts);
-admin_route.get("/home", adminController.homePage);
-admin_route.get("/productlist", adminController.loadProductlist);
-admin_route.get("/editproduct/:id", adminController.loadEditproduct);
-admin_route.get("/addcoupon", adminController.loadAddcoupon);
-admin_route.get("/couponlist", adminController.loadCouponList);
-admin_route.get("/editcoupon/:id", adminController.editCoupon);
-admin_route.get("/orderlist", adminController.orderList);
-admin_route.get("/orderdetails/:id", adminController.orderDetails);
-admin_route.get("/cancelorder/:id", adminController.cancelOrder);
-admin_route.get("/invoice/:id", adminController.invoice);
-admin_route.get("/logout", adminController.logout);
+admin_route.get("/dashboard",Session.adminSession, adminController.loadDashboard);
+admin_route.get("/userlist",Session.adminSession, adminController.loadUserlist);
+admin_route.get("/addcategory",Session.adminSession, adminController.loadAddcategory);
+admin_route.get("/editcategory/:id",Session.adminSession, adminController.loadeditCategory);
+admin_route.get("/deletecategory/:id", Session.adminSession,adminController.deleteCategory);
+
+
+admin_route.get("/addproducts",Session.adminSession, adminController.loadAddproducts);
+admin_route.get("/home",Session.adminSession, adminController.homePage);
+admin_route.get("/productlist",Session.adminSession, adminController.loadProductlist);
+admin_route.get("/editproduct/:id", Session.adminSession,adminController.loadEditproduct);
+admin_route.get("/addcoupon",Session.adminSession, adminController.loadAddcoupon);
+admin_route.get("/couponlist", Session.adminSession,adminController.loadCouponList);
+admin_route.get("/editcoupon/:id", Session.adminSession,adminController.editCoupon);
+admin_route.get("/deletecoupon/:id",Session.adminSession, adminController.deleteCoupon);
+
+
+
+admin_route.get("/orderlist", Session.adminSession,adminController.orderList);
+admin_route.get("/orderdetails/:id",Session.adminSession, adminController.orderDetails);
+admin_route.get("/cancelorder/:id", Session.adminSession,adminController.cancelOrder);
+admin_route.get("/invoice/:id",Session.adminSession, adminController.invoice);
+admin_route.get("/logout",Session.adminSession, adminController.logout);
 admin_route.post("/addbanner",uploadOptions.array("image", 1), adminController.addBanner);
-admin_route.get("/addbannerPage", adminController.loadAddBanner);
-admin_route.get("/bannerlist", adminController.loadbannerList);
-admin_route.get("/editbanner/:id", adminController.editBanner);
-admin_route.post("/salesdata", adminController.salesData);
-admin_route.get("/salesdataexcel", adminController.salesDataExcel);
-admin_route.get("/salesdataexcell", adminController.salesDataExcell);
+admin_route.get("/addbannerPage",Session.adminSession, adminController.loadAddBanner);
+admin_route.get("/bannerlist",Session.adminSession, adminController.loadbannerList);
+admin_route.get("/editbanner/:id",Session.adminSession, adminController.editBanner);
+admin_route.post("/salesdata",Session.adminSession, adminController.salesData);
+admin_route.get("/salesdataexcel",Session.adminSession, adminController.salesDataExcel);
+// admin_route.get("/salesdataexcell", adminController.salesDataExcell);
 
 
 
@@ -78,6 +86,8 @@ admin_route.post("/addcategory", adminController.insertCategory);
 admin_route.post("/deleteProduct/:id", adminController.deleteProduct);
 admin_route.post("/getdeleteProduct/:id", adminController.getdeleteProduct);
 admin_route.post("/updateProduct/:id",uploadOptions.array("image", 5), adminController.updateProduct);
+admin_route.post("/updatecategory/:id", adminController.updateCategory);
+
 
 
 

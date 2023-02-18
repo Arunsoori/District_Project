@@ -77,7 +77,7 @@
                                 <div class="dashboard-menu">
                                     <ul class="nav flex-column" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Coupon</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
@@ -85,6 +85,7 @@
                                         <li class="nav-item">
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Profile</a>
                                         </li>
+                                        
                                         <li class="nav-item">
                                             <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
                                         </li>
@@ -105,7 +106,7 @@
                                                 <h5 class="mb-0"><%= login.username  %>  </h5>
                                             </div>
                                             <div class="card-body">
-                                                <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
+                                                <p> <a href="#">you have <%=coupon.Discount%>% discount on your each <%=coupon.Cap %>$ above purchase using this code- "<%= coupon.Code %>"</a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -124,10 +125,12 @@
                                                                 <th>Ordered On</th>
                                                                 <th>Total</th>
                                                                 <th>Payment method</th>
-                                                                <th>Order status</th>
+                                                                <th>Payment status</th>
                                                                 <th>Delivery status</th>
 
                                                                 <th>Actions</th>
+                                                                <th>Actions</th>
+
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -137,10 +140,12 @@
                                                                 <td><%= order.ordered_date.getDate()+ '-'+ (order.ordered_date.getMonth()+1)+'-'+ order.ordered_date.getFullYear() %></td>
                                                                 <td><%= order.total %></td>
                                                                 <td><%= order.payment.pay_method %></td>
-                                                                <td><%= order.order_status   %></td>
-                                                                <td><%= order.order_status %></td>
+                                                                <td><%= order.payment.pay_status   %></td>
+                                                                <td><%= order.delivery_status %></td>
 
                                                                 <td><a href="/useorderdetails/<%= order._id %>" class="btn-small d-block">View</a></td>
+                                                                <td><a href="/cancelorder/<%= order._id %>" class="btn-small d-block">Cancel</a></td>
+
                                                             </tr>
 
                             <% }) %>
@@ -179,6 +184,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                   
                                     <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                                         <div class="row">
                                     <% addressdata.forEach(function(address){ %>

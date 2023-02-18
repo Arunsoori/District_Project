@@ -32,11 +32,13 @@
                                 <td class="price" data-title="Price"><span><%=item.productId.price%> </span></td>
                                 <td class="text-center" data-title="Stock">
                                     <div class="detail-qty border radius  m-auto">
-                                      <button onclick="changeItemQty('<%= item._id %>','<%= item.productId._id %>',-1)" class="qty-down"><i class="fi-rs-angle-small-down"></i></button>
+                                      <button class="" onclick="changeItemQty('<%= item._id %>','<%= item.productId._id %>',-1)" ><i class="fi-rs-angle-small-down"></i></button>
                                         <span class="qty-val" id="itemCount<%= item._id %>"><%=item.quantity%></span>
-                                        <button onclick="changeItemQty('<%= item._id %>','<%= item.productId._id %>',1)" class="qty-up"><i class="fi-rs-angle-small-up"></i></button>
+                                        <button  class="" onclick="changeItemQty('<%= item._id %>','<%= item.productId._id %>',1)" ><i class="fi-rs-angle-small-up"></i></button>
                                     </div>
                                 </td>
+                                <!--  -->
+                                <!--  -->
                                 <td class="text-right" data-title="Cart">
                                     <span id="itemPrice<%= item._id %>"><%=item.total%> </span>
                                 </td>
@@ -424,10 +426,10 @@
     </div>
 </section>
 <% } else { %>
-    <section class="vh-100">
+    <section style="display: flex ; flex-direction: column; justify-content: center;" class="vh-100">
         <div></div>
-        <div class="row justify-content-center">
-            <h2>Your Cart is Empty!!!</h2>
+        <div class="row justify-content-center text-center">
+            <h2 >Your Cart is Empty!!!</h2>
         </div>
         <div class="row justify-content-center">
             <p><a href="/shop" class="btn btn-primary">Shop Now</a></p>
