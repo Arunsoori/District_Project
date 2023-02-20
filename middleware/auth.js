@@ -5,6 +5,7 @@
         }
         else {
             res.redirect('/login')
+            res.json({login :false})
         }
     }
 

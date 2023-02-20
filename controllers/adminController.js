@@ -35,8 +35,8 @@ const loadDashboard = async (req, res) => {
     let categories = await categoryModel.find()
     let products = await productModel.find()
     let salesData = await orderModel.find({order_status:'placed'})
-    let codNum = (await orderModel.find({ order_status: "placed", 'payment.pay_method': "COD" })).length
-    let onlineNum = (await orderModel.find({ order_status: "placed", 'payment.pay_method': "online payment" })).length
+    let codNum = (await orderModel.find({ 'payment.pay_status': "placed", 'payment.pay_method': "COD" })).length
+    let onlineNum = (await orderModel.find({ 'payment.pay_status': "placed", 'payment.pay_method': "online payment" })).length
     
 console.log(codNum, onlineNum);
 
@@ -45,7 +45,7 @@ console.log(codNum, onlineNum);
     
     let salesChartDt = await orderModel.aggregate([
       {
-        $match: { order_status: 'placed' }
+        $match: { 'payment.pay_status': 'placed' }
       },
       {
         $group: {
@@ -337,82 +337,7 @@ const loadEditproduct = async (req, res,next) => {
     console.log(error.message);
   }
 };
-// const editProduct= async (req, res) => {
-//   try {
-//       // if (req.session.adminLogin) {
-//           const id = req.params.id
-//           const type = await productModel.find()
-//           const brand = await categoryModel.find()
-//           // const fuel = await FuelModel.find()
-//           let product = await ProductModel.findOne({ _id: id }).populate('type', 'typeName').populate('category', 'category').
-//           console.log(product)
-//           res.render('admin/editProduct', { product, type, brand, fuel, })//admin: req.session.admin 
-//       // }
 
-//   } catch (err) {
-//       next(err)
-//   }
-
-// }
-// updateProducts=  (req, res) => {
-
-//   let id = req.params.id
-//   let new_images = ''
-//   let dataToUpload = {
-//     name: req.body.name,
-//     category: req.body.category,
-//     description: req.body.description,
-//     selling_price: req.body.selling_price,
-//     listing_price: req.body.listing_price,
-//     stock_count: req.body.stock_count,
-//   }
-//   if (req.files.length>0) {
-//     new_images = req.files.map(file => file.filename);
-//     dataToUpload.images = new_images
-//   }  
-
-//   admin_products.findByIdAndUpdate(id, dataToUpload, (err, result) => {
-//     if (err) {
-//       res.json({ message: err.message, type: 'danger' })
-//     } else {
-//       req.session.message = {
-//         type: 'success',
-//         message: 'Product updated successfully'
-//       }
-//       res.redirect('/admin/admin_product')
-//     }
-//   })
-
-// }
-// const updateProduct= async (req, res) => {
-//   console.log(req.body);
-//   try {
-//       const { productName, description, mycategory, price} = req.body;
-      
-
-//       if (req.file) {
-//           // await ProductModel.findByIdAndUpdate(
-//           //     { _id: req.params.id }, { $set: { image: image.filename } }
-//           // );
-//           const image = req.files;
-//           image.forEach(img => { });
-//           console.log(image);
-//           const newimages = image != null ? image.map((img) => img.filename) : null
-//           console.log(newimages)
-
-//           await productModel.findByIdAndUpdate({ _id: req.params.id }, { $set: { image: newimages } })
-//       }
-//       let details = await productModel.findOneAndUpdate(
-//           { _id: req.params.id }, { $set: { productName, description, mycategory, price } }
-//       );
-//       await details.save().then(() => {
-//           res.redirect('/admin/productlist')
-//       })
-
-//   } catch (err) {
-//       // next(err)
-//   }
-// }
  const updateProduct= (req, res,next) => {
 
   let id = req.params.id
@@ -502,13 +427,17 @@ next(error);
 }
 };
 const editCoupon = async(req,res,next)=>{
+  try{
  const couponId = req.params.id
 const couponDetails = await couponModel.findById({_id:couponId})
 
   res.render('editcoupon',{couponDetails})
+}catch (error) {
+  next(error);
+}
 }
 const updateCoupon= async(req, res,next) => {
-  console.log("LLL");
+ 
   try{
 
   let id = new mongoose.Types.ObjectId(req.params.id)
@@ -581,25 +510,43 @@ console.log(err);
   
   }
   const cancelOrder = async (req,res)=>{
+    try{
     console.log("camcel orderb get");
    let orderId= req.params.id
-    orderModel.updateOne({_id:orderId},{$set:{order_status:'cancelled', 'delivery_status.cancelled.state': true,'delivery_status.cancelled.date': Date.now()}}).then(()=>{
+    orderModel.updateOne({_id:orderId},{$set:{delivery_status:'cancelled', }}).then(()=>{
+      // 'delivery_status.cancelled.state': true,'delivery_status.cancelled.date': Date.now()}
     res.redirect('/admin/orderlist')
    })
   }
+catch (error) {
+  next(error);
+}
+  }
+
+
   const delivery = async(req,res)=>{
+    try{
     console.log("innnnnnnnnnnnn");
    let orderId= req.params.id
-   console.log(orderId);
+   const order = await orderModel.findById(orderId)
     let de= req.body.Delivery
-    console.log(de);
- 
+    
+ if (order.delivery_status === "cancelled"){
+  // swal(
+  //   'success',
+  //   'product added to wishlist',
+  //   'success'
+  // )
+ }else{
  
    await orderModel.updateOne({_id:orderId},{$set:{delivery_status:req.body.Delivery}})
     res.redirect('/admin/orderlist')
-    
+ }
 
+  }catch (error) {
+    next(error);
   }
+}
   const invoice= async(req,res,next)=>{
     try {
       let orderId = req.params.id
@@ -654,6 +601,7 @@ console.log(err);
   }
  
   const logout = async(req,res)=>{
+    try{
     req.session.destroy((error)=>{
       if (error){
         console.log(error);
@@ -665,6 +613,9 @@ console.log(err);
     )
   
   }
+  catch (error) {
+    next(error);
+  }}
   const loadbannerList = async (req, res,next) => {
     console.log("yee");
       try {
@@ -711,8 +662,7 @@ console.log(err);
          res.render('editbanner',{bannerDetails})
        }
        const salesData = async (req,res,next)=>{
-        console.log("ethiiiiiiiiiiiii");
-        console.log(req.body);
+       
         
         try {
            orderdata = await orderModel.aggregate([
@@ -743,69 +693,14 @@ console.log(err);
             // },
             { $sort: { ordered_date: -1 } },
           ]);
-          console.log("orderdata",orderdata[0]);
+          
           // new Date
           res.render("salesdata",{orderdata});
         } catch (error) {
           next(error)
         }
        }
-      //  const salesDataExcel = (req,res,next)=>{
-      //   console.log("excellin");
-      //   // console.log(req.body);
-      //   try{
-      //   console.log(orderdata,"excellorderdata");
-      //   const workbook = new excelJS.Workbook();
-      //   const worksheet = workbook.addWorksheet("Sales Roport");
-      //   worksheet.columns = [
-      //     { header: "s no.", key: "s_no" },
-      //     { header: "Date", key: "data" },
-      //     { header: "User", key: "user" },
-      //     { header: "Payment", key: "payment" },
-      //     { header: "Status", key: "status" },
-      //     { header: "Items", key: "item" },
-      //     { header: "total", key: "total" },
-      //   ];
-      //   let counter = 1;
-
-      //   orderdata.forEach((sale) => {
-      //     const date = sale.date;
-      //     const isoString = date.toISOString();
-      //     const newDate = isoString.split("T")[0];
-      //     sale.data = newDate;
-      //     sale.s_no = counter;
-      //     sale.user = sale.user[0].name;
-      //     sale.payment = sale.payment.pay_method;
-      //     sale.total = sale.total;
-      //     sale.item = sale.product.length;
-      //     worksheet.addRow(sale);
-      //     counter++;
-      //   });
-
-      //   worksheet.getRow(1).eachCell((cell) => {
-      //     cell.font = { bold: true };
-      //   });
-
-      //   res.setHeader(
-      //     "Content-Type",
-      //     "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
-      //   );
-
-      //   // res.setHeader(
-      //   //   "Content-Disposition",
-      //   //   `attachment; filename=sales_Report_from_${req.body.from}_to_${req.body.toDate}.xlsx`
-      //   // );
-
-      //   return workbook.xlsx.write(res).then(() => {
-      //     res.status(200);
-      //   });
        
-        
-      //   } catch (error) {
-      //     next(error)
-      //   }
-      // }
-//       
 const salesDataExcel = async (req,res, next)=>
 {
   try{

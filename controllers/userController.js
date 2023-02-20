@@ -717,6 +717,7 @@ const placeOrder = async (req, res, next) => {
       userId: req.session.userId,
       total: subtotal,
       products: prods,
+      
       payment: {
         pay_method: order.payment_option,
         pay_status: status,

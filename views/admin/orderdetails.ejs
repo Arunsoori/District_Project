@@ -19,12 +19,16 @@
                     </span> <br>
                     <small class="text-muted">Order ID: 3453012</small>
                 </div>
+                <% if (orderinfo.delivery_status === "cancelled") { %>
+                  <p>cancelled order</p>
+                    <% } else { %>
+
                 <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     <form  action="/admin/delivery/<%= orderinfo._id %>" method="post">
                     <select name="Delivery" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
                         <option value="Ordered">Ordered</option>
                         <option value="Shipped">Shipped</option>
-                        <option value="Delivery">Out For Delivery</option>
+                        <option value="Delivery">OutForDelivery</option>
                         <option value="Delivered">Delivered</option>
                         
                     </select>
@@ -33,6 +37,8 @@
                     <a class="btn btn-secondary print ms-2" href="/admin/invoice/<%= orderinfo._id %>"><i class="icon material-icons md-print"></i></a>
                 </form>
                 </div>
+                <% } %>
+
             </div>
         </header> <!-- card-header end// -->
         <div class="card-body">
